@@ -6,7 +6,6 @@ def main(args):
     data = get_user_missions()
     station_groups = {}
     for item in data['objects']:
-        print(item['slug'], item['stationName'])
         station_groups.setdefault(item['stationName'], []).append(item)
 
     for station, data in sorted(station_groups.items(), key=lambda a: a[0]):
