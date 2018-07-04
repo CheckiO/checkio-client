@@ -31,7 +31,7 @@ def main(args):
     print()
     mission_info = get_mission_info(mission)
     mission_id = mission_info['id']
-    with open(filename) as fh:
+    with open(filename, encoding="utf-8") as fh:
         data = check_solution(code_for_check(fh.read()), mission_id)
     while data:
         block = data.pop(0)
@@ -73,7 +73,7 @@ def main_run(args):
     if 'executable' in domain_data:
         return os.system(' '.join((domain_data['executable'], filename)))
 
-    with open(filename) as fh:
+    with open(filename, encoding="utf-8") as fh:
         data = run_solution(code_for_check(fh.read()))
     ret = False
     while data:

@@ -69,7 +69,7 @@ def code_for_file(slug, code, html_description=None):
 
 
 def init_code_file(filename, code):
-    with open(filename, 'w') as fh: #TODO: if file exists
+    with open(filename, 'w', encoding='utf-8') as fh: #TODO: if file exists
         fh.write(code)
 
     st = os.stat(filename)
