@@ -13,7 +13,7 @@ def main(args):
 
     print('Which domain you want to use by default? (first two letters are needed)')
     for dom, dom_conf in conf.domains.items():
-        print('[{}] - {}'.format(dom, dom_conf['domain']))
+        print('[{}] - {}'.format(dom, dom_conf['url_main']))
     print('by default:{}'.format(conf.default_domain))
 
     while True:
@@ -29,8 +29,8 @@ def main(args):
 
     domain_data = conf.domains[new_domain]
 
-    print('What is your KEY for https://{}?'.format(domain_data['domain']))
-    print('You can find one on https://{}/mission/add/'.format(domain_data['domain']))
+    print('What is your KEY for {}?'.format(domain_data['url_main']))
+    print('You can find one on {}/mission/add/'.format(domain_data['url_main']))
     while True:
         new_key = input('KEY:').strip()
         if not new_key:
