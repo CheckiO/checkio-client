@@ -12,6 +12,12 @@ def main(args):
 
     domain_data = conf.default_domain_data
 
+    if not folder:
+        folder = domain_data.get('solutions')
+        if not folder:
+            print('Select folder')
+            return
+
     print('Rquesting...')
     data = get_user_missions()
     os.makedirs(folder, exist_ok=True)
