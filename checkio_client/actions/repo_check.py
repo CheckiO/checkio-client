@@ -82,6 +82,7 @@ async def tcp_echo_client(message, loop):
 
     print('Send: %r' % message)
     writer.write(message.encode() + b'\0')
+    print('Open ' + conf_data['url_main'] + '/mission/tester/')
 
     while True:
         data = await reader.readuntil('\0'.encode())
