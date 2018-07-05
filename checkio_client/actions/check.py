@@ -51,9 +51,13 @@ def main(args):
                 print()
                 print('!!! Congratulation !!!')
                 print()
-                print('Link for checking solution of other users: {}/mission/{}/publications/'.format(domain_data['url_main'], mission))
+                print('Link for checking solution of other users: {}/mission/{}/publications/'.format(
+                        domain_data['url_main'], mission
+                    ))
                 print()
-                print('Link for sharing solution: {}/mission/{}/publications/add/'.format(domain_data['url_main'], mission))
+                print('Link for sharing solution: {}/mission/{}/publications/add/'.format(
+                        domain_data['url_main'], mission
+                    ))
                 print()
             else:
                 print('!! Failed !!')
