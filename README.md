@@ -73,6 +73,33 @@ and the second one is to simply execute the solution
 $ checkio_solutions/median.py
 ```
 
+after success check you will get link for solutions of other players and link for sharing own solution
+
+## Sync all your solutions on one folder
+
+```bash
+$ checkio sync ~/checkio_solutions
+```
+
+will save all of your solutions in folder `~/checkio_solutions`. Check help for commad sync in order to learn more about syncronization options
+
+```bash
+$ checkio sync -h
+```
+
+your last syncromized folder will be saved into `~/.checkio/config.ini` so if you will need to resync your solutions you can simply do
+
+```bash
+$ checkio sync
+```
+
+and to be able to check and run solutions by using simplier command
+
+```bash
+$ checkio check median
+$ checkio run median
+```
+
 ## Use multiple domains (py and js)
 
 if you configure Python as default service, you can still use JS. In order to so you need to add key in config sile for `js_checkio` section and then you can run any command with adding extra option `--domain=js` for example
@@ -84,4 +111,26 @@ $ checkio --domain=js run median.js
 
 ## init and test your repository
 
-*TODO*
+**In order to work with repositories module GitPython is required**
+
+with checkio tool you can also create your own checkio missions
+
+```bash
+$ checkio initrepo ~/checkio_mission/new_mission
+```
+
+You can link and push source of your mission into github repo
+
+```bash
+$ checkio linkrepo  ~/checkio_mission/new_mission git@github.com:oduvan/checkio-mission-new-mission.git
+```
+
+After you done with editing mission you test you mission using command
+
+```bash
+$ checkio checkrepo ~/checkio_mission/new_mission
+```
+
+and open https://py.checkio.org/mission/tester/ in your browser.
+
+To learn more you can check our [blog post](https://py.checkio.org/blog/cio-task-tester/) about creating missions on checkio (but with using our old tool) and also [blog post about improving other mission](https://py.checkio.org/blog/how-to-improve-checkio-missions/)

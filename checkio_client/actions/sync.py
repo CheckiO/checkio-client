@@ -18,7 +18,7 @@ def main(args):
             print('Select folder')
             return
 
-    print('Rquesting...')
+    print('Requesting...')
     data = get_user_missions()
     os.makedirs(folder, exist_ok=True)
 

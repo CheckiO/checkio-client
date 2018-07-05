@@ -41,6 +41,7 @@ def main_init(args):
     if os.path.exists(folder):
         print('Folder exists already')
         return
+    print('Reciving template mission from ' + conf.repo_template + ' ...')
     git.Repo.clone_from(conf.repo_template, folder)
     shutil.rmtree(os.path.join(folder, '.git'))
     if args.repository:
