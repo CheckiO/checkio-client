@@ -4,6 +4,9 @@ import stat
 from checkio_client.settings import conf
 from html.parser import HTMLParser
 
+def get_end_desc_line():
+    comment = conf.default_domain_data['comment']
+    return comment + 'END_DESC'
 
 class DescriptionParser(HTMLParser):
     escaped = ''
@@ -55,11 +58,12 @@ def escape_description(text):
 
 
 def code_for_file(slug, code, html_description=None):
+    code = code.strip()
     if html_description:
         description = escape_description(html_description)
         comment = conf.default_domain_data['comment']
         description = comment + ('\n' + comment).join(description.split('\n'))
-        code = description + '\n' + comment + 'END_DESC' + '\n\n' + code
+        code = description + '\n' + get_end_desc_line() + '\n\n' + code
 
     return '#!/usr/bin/env checkio --domain={domain} check {slug}\n\n{code}'.format(
             slug=slug,
@@ -76,7 +80,20 @@ def init_code_file(filename, code):
     os.chmod(filename, st.st_mode | stat.S_IEXEC)
 
 def code_for_check(code):
+    comment = conf.default_domain_data['comment']
     lines = code.split('\n')
-    lines[0] = ''
+    if lines[0].startswith('#!/usr/bin/env checkio'):
+        lines[0] = ''
+
+    end_line = get_end_desc_line()
+    if end_line in lines:
+        for i in range(len(lines)):
+            last_line = lines[i] == end_line
+            if lines[i].startswith(comment):
+                lines[i] = ''
+                
+            if last_line:
+                break
+
     return '\n'.join(lines)
 
