@@ -53,13 +53,34 @@ key = b30523506050473b8f33ca440101026a
 
 ```
 
-## Sync with folder
+## Run and Check your solution
 
+Here is a simple way how you can get your solution for [Median mission](https://py.checkio.org/en/mission/median/) 
 
+```bash
+$ checkio init median checkio_solutions/median.py
+```
+
+you have two options here to test your solution. First one is with using `checkio` command
+
+```bash
+$ checkio init median checkio_solutions/median.py
+```
+
+and the second one is to simply execute the solution
+
+```bash
+$ checkio_solutions/median.py
+```
 
 ## Use multiple domains (py and js)
 
-*TODO*
+if you configure Python as default service, you can still use JS. In order to so you need to add key in config sile for `js_checkio` section and then you can run any command with adding extra option `--domain=js` for example
+
+```bash
+$ checkio --domain=js sync checkio_solutions
+$ checkio --domain=js run median.js
+```
 
 ## init and test your repository
 
