@@ -8,7 +8,7 @@ def api_request(path):
     req = urllib.request.Request(domain_data['url_main'] + path)
     req.add_header('CheckiOApiKey', domain_data['key'])
     res = urllib.request.urlopen(req) # TODO: all kind of errors
-    return json.loads(res.read())
+    return json.loads(res.read().decode('utf-8'))
 
 def get_mission_info(mission_slug):
     return api_request('/api/tasks/' + mission_slug + '/')
