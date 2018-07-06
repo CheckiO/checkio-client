@@ -102,7 +102,7 @@ $ checkio run median
 
 ## Use multiple domains (py and js)
 
-if you configure Python as default service, you can still use JS. In order to so you need to add key in config sile for `js_checkio` section and then you can run any command with adding extra option `--domain=js` for example
+if you configure Python as default service, you can still use JS. In order to so you need to add key in config file for `js_checkio` section and then you can run any command with adding extra option `--domain=js` for example
 
 ```bash
 $ checkio --domain=js sync checkio_solutions
