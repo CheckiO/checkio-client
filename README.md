@@ -21,7 +21,7 @@ After the installation a new `checkio` command  becomes available.
 
 ## Configuration
 
-during your first run you should do
+your first command should be
 
 ```bash
 $ checkio config
