@@ -9,7 +9,7 @@ checkio-client
 $ pip install --force-reinstall git+https://github.com/CheckiO/checkio-client.git
 ```
 
-or, if you plan to contribute you can make a clone into specific folder and then install from there
+or if you plan to contribute, you can create a clone in a specific folder and install from there
 
 ```bash
 $ git clone https://github.com/CheckiO/checkio-client.git
@@ -17,30 +17,30 @@ $ git clone https://github.com/CheckiO/checkio-client.git
 $ cd checkio-client
 $ pip install -e .
 ```
-After installation new command `checkio` become available.
+After the installation a new `checkio` command  becomes available.
 
 ## Configuration
 
-in your first run you should do
+during your first run you should do
 
 ```bash
 $ checkio config
 ```
 
-you will need a key in order to finsh it. How to get the key will be shown during installation.
+you’ll need a key in order to finish it. How to get the key will be shown during the installation.
 
-You can find all available commands using
+You can find all of the available commands by using
 
 ```bash
 $ checkio -h
 ```
-and detailed help for specific command using (for example for command `config`)
+and the detailed help for a specific command by using (for example, for a `config` command)
 
 ```bash
 $ checkio config -h
 ```
 
-The configuration process will create a `.checkio` in your home folder and with one file `config.ini` in it
+The configuration process will create `.checkio` in your home folder along with the `config.ini` file in it
 
 ```
 [Main]
@@ -55,13 +55,13 @@ key = b30523506050473b8f33ca440101026a
 
 ## Run and Check your solution
 
-Here is a simple way how you can get your solution for [Median mission](https://py.checkio.org/en/mission/median/) 
+Here is a simple way in which you can get your solution for [Median mission](https://py.checkio.org/en/mission/median/) 
 
 ```bash
 $ checkio init median checkio_solutions/median.py
 ```
 
-you have two options here to test your solution. First one is with using `checkio` command
+here you have two options to test your solution. The first one is by using the `checkio` command
 
 ```bash
 $ checkio init median checkio_solutions/median.py
@@ -73,7 +73,7 @@ and the second one is to simply execute the solution
 $ checkio_solutions/median.py
 ```
 
-after success check you will get link for solutions of other players and link for sharing own solution
+after the successful check you will get a link for other players’ solutions and a link for sharing your own solution
 
 ## Sync all your solutions on one folder
 
@@ -81,19 +81,19 @@ after success check you will get link for solutions of other players and link fo
 $ checkio sync ~/checkio_solutions
 ```
 
-will save all of your solutions in folder `~/checkio_solutions`. Check help for commad sync in order to learn more about syncronization options
+will save all of your solutions in folder `~/checkio_solutions`. Check out help for command sync in order to learn more about the synchronization options
 
 ```bash
 $ checkio sync -h
 ```
 
-your last syncromized folder will be saved into `~/.checkio/config.ini` so if you will need to resync your solutions you can simply do
+your last synchronized folder will be saved into `~/.checkio/config.ini`, so if you’ll need to resync your solutions you can simply do
 
 ```bash
 $ checkio sync
 ```
 
-and to be able to check and run solutions by using simplier command
+and to check and run the solutions by using the simpler command
 
 ```bash
 $ checkio check median
@@ -102,7 +102,7 @@ $ checkio run median
 
 ## Use multiple domains (py and js)
 
-if you configure Python as default service, you can still use JS. In order to so you need to add key in config file for `js_checkio` section and then you can run any command with adding extra option `--domain=js` for example
+if you configure Python as a default service, you can still use JS. In order to do so you need to add a key in config file for the `js_checkio` section, and then you can run any command by adding the extra option `--domain=js`, for example,
 
 ```bash
 $ checkio --domain=js sync checkio_solutions
@@ -113,19 +113,19 @@ $ checkio --domain=js run median.js
 
 **In order to work with repositories module GitPython is required**
 
-with checkio tool you can also create your own checkio missions
+by using checkio tools you can also create your own checkio missions
 
 ```bash
 $ checkio initrepo ~/checkio_mission/new_mission
 ```
 
-You can link and push source of your mission into github repo
+You can link and push the source of your mission into the github repo
 
 ```bash
 $ checkio linkrepo  ~/checkio_mission/new_mission git@github.com:oduvan/checkio-mission-new-mission.git
 ```
 
-After you done with editing mission you test you mission using command
+After you are done editing the mission, you test your mission by using the command
 
 ```bash
 $ checkio checkrepo ~/checkio_mission/new_mission
@@ -133,4 +133,4 @@ $ checkio checkrepo ~/checkio_mission/new_mission
 
 and open https://py.checkio.org/mission/tester/ in your browser.
 
-To learn more you can check our [blog post](https://py.checkio.org/blog/cio-task-tester/) about creating missions on checkio (but with using our old tool) and also [blog post about improving other mission](https://py.checkio.org/blog/how-to-improve-checkio-missions/)
+To learn more you can check out our [blog post](https://py.checkio.org/blog/cio-task-tester/) on the topic of creating missions on checkio (but with using our old tool) and also [blog post about improving other mission](https://py.checkio.org/blog/how-to-improve-checkio-missions/)
