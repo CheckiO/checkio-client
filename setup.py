@@ -7,7 +7,7 @@ source_directory = dirname(abspath(__file__))
 
 setup(
     name='checkio_client',
-    version='0.0.1',
+    version='0.0.2',
     description='CheckiO command line interface for playing CheckiO',
     author='CheckiO',
     author_email='a.lyabah@checkio.org',

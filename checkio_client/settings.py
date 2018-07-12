@@ -5,6 +5,8 @@ import configparser
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
+VERSION = (0, 0, 2)
+
 class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')

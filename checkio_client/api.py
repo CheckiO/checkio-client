@@ -1,13 +1,25 @@
-from checkio_client.settings import conf
+from checkio_client.settings import conf, VERSION
 import urllib.request
 import urllib.parse
+from urllib.error import HTTPError
 import json
+
+STR_VERSION = '.'.join(map(str, VERSION))
 
 def api_request(path):
     domain_data = conf.default_domain_data
     req = urllib.request.Request(domain_data['url_main'] + path)
     req.add_header('CheckiOApiKey', domain_data['key'])
-    res = urllib.request.urlopen(req) # TODO: all kind of errors
+    req.add_header('X-CheckiO-Client-Version', STR_VERSION)
+    try:
+        res = urllib.request.urlopen(req) # TODO: all kind of errors
+    except HTTPError as e:
+        resp = json.loads(e.read().decode('utf-8'))
+        if resp.get('error') == 'OldClient':
+            raise ValueError('Please update CheckiO console tool.')
+        else:
+            raise
+
     return json.loads(res.read().decode('utf-8'))
 
 def get_mission_info(mission_slug):
