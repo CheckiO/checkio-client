@@ -26,6 +26,10 @@ def main(args):
 
     if main_run(args):
         return
+
+    if args.run:
+        return
+
     print()
     print('Start checking...')
     print()

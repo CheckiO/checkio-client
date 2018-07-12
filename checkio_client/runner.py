@@ -46,6 +46,8 @@ p_check_after.add_argument('mission', type=str, nargs=1, metavar='mission',
     help='slug for mission you want to check')
 p_check_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
+p_check_after.add_argument('--run', action='store_true',
+     help='only run, without check')
 p_check_after.set_defaults(module='check')
 
 
