@@ -60,6 +60,8 @@ p_run_after.set_defaults(module='check', func='main_run')
 p_init = subparsers.add_parser('init', help='create a file with solution')
 p_init.add_argument('--without-info', action='store_true',
      help='do not include mission info')
+p_init.add_argument('--out', action='store_true',
+     help='stdout the source code')
 p_init.add_argument('mission', type=str, nargs=1, metavar='mission',
     help='slug for mission')
 p_init.add_argument('filename', type=str, nargs='?', metavar='filename',
