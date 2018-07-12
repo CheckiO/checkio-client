@@ -27,7 +27,7 @@ your first command should be
 $ checkio config
 ```
 
-you’ll need a key in order to finish it. How to get the key will be shown during the installation.
+you'll need a key in order to finish it. You can obtain the API Key by following this <a href="https://py.checkio.org/profile/edit/">link</a> for Python, and <a href="https://js.checkio.org/profile/edit/">this one</a> for JavaScript.
 
 You can find all of the available commands by using
 
