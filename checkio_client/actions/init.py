@@ -8,7 +8,7 @@ import stat
 
 def main(args):
     if args.out and args.filename:
-        raise ValueError('out and filename can be used together')
+        raise ValueError('out and filename can not be used together')
 
     mission = args.mission[0]
     filename = args.filename
