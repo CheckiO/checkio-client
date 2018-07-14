@@ -27,9 +27,6 @@ def main(args):
     if main_run(args):
         return
 
-    if args.run:
-        return
-
     print()
     print('Start checking...')
     print()
@@ -75,14 +72,14 @@ def main(args):
     
 
 def main_run(args):
+    if getattr(args, 'check', False):
+        args.check = False # to avoid recursion
+        return main(args)
+
     filename = get_filename(args)
     mission = args.mission[0]
 
     domain_data = conf.default_domain_data
-
-    print()
-    print('Start running...')
-    print()
 
     if 'executable' in domain_data:
         return os.system(' '.join((domain_data['executable'], filename)))

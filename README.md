@@ -67,10 +67,10 @@ here you have two options to test your solution. The first one is by using the `
 $ checkio init median checkio_solutions/median.py
 ```
 
-and the second one is to simply execute the solution
+and the second one is to simply execute the solution with `--check` argument (without it will simply run the solution)
 
 ```bash
-$ checkio_solutions/median.py
+$ checkio_solutions/median.py --check
 ```
 
 after the successful check you will get a link for other players’ solutions and a link for sharing your own solution
