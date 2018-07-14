@@ -65,7 +65,7 @@ def code_for_file(slug, code, html_description=None):
         description = comment + ('\n' + comment).join(description.split('\n'))
         code = description + '\n' + get_end_desc_line() + '\n\n' + code
 
-    return '#!/usr/bin/env checkio --domain={domain} check {slug}\n\n{code}'.format(
+    return '#!/usr/bin/env checkio --domain={domain} run {slug}\n\n{code}'.format(
             slug=slug,
             code=code.replace('\r', ''),
             domain=conf.default_domain
