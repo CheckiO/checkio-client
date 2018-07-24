@@ -52,7 +52,7 @@ def main(args):
         # file changed
         with open(filename, 'r', encoding='utf-8') as fh:
             local_code = fh.read()
-            if local_code == output:
+            if code_for_send(local_code) == code_for_send(output):
                 continue
         
         t_changed = time.time() - f_stats.st_mtime
