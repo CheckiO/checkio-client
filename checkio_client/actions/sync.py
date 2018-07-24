@@ -1,12 +1,13 @@
 import os
+import time
 
-from checkio_client.api import get_user_missions
-from checkio_client.utils.code import code_for_file, init_code_file
+from checkio_client.api import get_user_missions, save_code
+from checkio_client.utils.code import code_for_file, init_code_file, code_for_send, solutions_paths
 from checkio_client.settings import conf
 
 def main(args):
     folder = args.folder
-    with_unseen = args.include_unseen
+    with_unseen = not args.exclude_unseen
     with_solved = not args.exclude_solved
     save_config = not args.without_config
 
@@ -17,11 +18,12 @@ def main(args):
         if not folder:
             print('Select folder')
             return
+        print('Using folder "{}"'.format(folder))
+
+    paths = solutions_paths(folder)
 
     print('Requesting...')
     data = get_user_missions()
-    os.makedirs(folder, exist_ok=True)
-
     for item in data['objects']:
         if not item['isStarted'] and not with_unseen:
             continue
@@ -33,17 +35,42 @@ def main(args):
         code = item['code']
         description = item['description']
 
-        filename = os.path.join(folder, mission.replace('-', '_') + '.' + domain_data['extension'])
-
         output = code_for_file(mission, code, 
             None if args.without_info else description)
 
-        init_code_file(filename, output)
+        # file exist
+        if mission not in paths:
+            filename = os.path.join(folder, item['stationName'], mission.replace('-', '_') + '.' + domain_data['extension'])
+            init_code_file(filename, output)
+            print(filename + ' - Created')
+            continue
 
-        print(filename + ' - Done')
+        filename = paths[mission]
+        f_stats = os.stat(filename)
+            
 
-        if save_config:
-            conf.default_domain_section['solutions'] = os.path.abspath(folder)
-            conf.save()
+        # file changed
+        with open(filename, 'r', encoding='utf-8') as fh:
+            local_code = fh.read()
+            if local_code == output:
+                continue
+        
+        t_changed = time.time() - f_stats.st_mtime
+
+        # local file have been changed
+        if not item['secondsPast'] or t_changed < item['secondsPast']:
+            print(filename + ' - Sending... ', end='')
+            save_code(code_for_send(local_code), item['id'])
+            print('Done')
+
+        # file was changed through the web interface
+        else:
+            init_code_file(filename, output)
+            print(filename + ' - Overwritten')
+
+
+    if save_config:
+        conf.default_domain_section['solutions'] = os.path.abspath(folder)
+        conf.save()
 
 

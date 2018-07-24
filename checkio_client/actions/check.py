@@ -5,17 +5,20 @@ import time
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
     restore, run_solution
-from checkio_client.utils.code import code_for_check
+from checkio_client.utils.code import code_for_check, solutions_paths
 
 def get_filename(args):
     if args.filename:
         return args.filename
     default_data = conf.default_domain_data
     if 'solutions' not in default_data:
-        raise ValueError('Filename is not defined')
+        raise ValueError('Solutions folder is not defined')
 
-    filename = args.mission[0].replace('-', '_') + '.' + default_data['extension']
-    return os.path.join(default_data['solutions'], filename)
+    mission = args.mission[0]
+    try:
+        return solutions_paths()[mission]
+    except KeyError:
+        raise ValueError('File for mission "{}"" not found'.format(mission))
 
 
 def main(args):

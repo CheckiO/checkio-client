@@ -63,7 +63,7 @@ def code_for_file(slug, code, html_description=None):
         description = escape_description(html_description)
         comment = conf.default_domain_data['comment']
         description = comment + ('\n' + comment).join(description.split('\n'))
-        code = description + '\n' + get_end_desc_line() + '\n\n' + code
+        code = description + '\n' + get_end_desc_line() + '\n\n' + code.strip()
 
     return '#!/usr/bin/env checkio --domain={domain} run {slug}\n\n{code}'.format(
             slug=slug,
@@ -73,6 +73,8 @@ def code_for_file(slug, code, html_description=None):
 
 
 def init_code_file(filename, code):
+    folder = os.path.dirname(filename)
+    os.makedirs(folder, exist_ok=True)
     with open(filename, 'w', encoding='utf-8') as fh: #TODO: if file exists
         fh.write(code)
 
@@ -97,3 +99,32 @@ def code_for_check(code):
 
     return '\n'.join(lines)
 
+def code_for_send(code):
+    return code_for_check(code).replace('\r', '').strip()
+
+def solutions_paths(folder=None):
+    domain_data = conf.default_domain_data
+    if folder is None:
+        folder = domain_data.get('solutions')
+
+    paths = {}
+    if not os.path.exists(folder):
+        return paths
+        
+    for (dirpath, dirnames, filenames) in os.walk(folder):
+        for filename in filenames:
+            if not filename.endswith('.' + domain_data['extension']):
+                continue
+            full_path = os.path.join(dirpath, filename)
+            with open(full_path, 'r', encoding='utf-8') as fh:
+                line = fh.readline()
+                if not line.startswith('#!'):
+                    continue
+                mission_slug = line.split()[-1]
+                if mission_slug in paths:
+                    raise ValueError('Dublicate files {} and {}'.format(
+                            full_path,
+                            paths[mission_slug]
+                        ))
+                paths[mission_slug] = full_path
+    return paths

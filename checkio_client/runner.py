@@ -80,8 +80,8 @@ p_sync.add_argument('--without-info', action='store_true',
      help='do not include mission info')
 p_sync.add_argument('--without-config', action='store_true',
      help='do not include mission into default solutions folder')
-p_sync.add_argument('--include-unseen', action='store_true',
-    help='include solutions for mission you haven\'t solved')
+p_sync.add_argument('--exclude-unseen', action='store_true',
+    help='exclude solutions for mission you haven\'t opened')
 p_sync.add_argument('--exclude-solved', action='store_true',
     help='exclude solutions for mission you have solved already')
 

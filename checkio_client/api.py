@@ -6,9 +6,11 @@ import json
 
 STR_VERSION = '.'.join(map(str, VERSION))
 
-def api_request(path):
+def api_request(path, data=None):
     domain_data = conf.default_domain_data
-    req = urllib.request.Request(domain_data['url_main'] + path)
+    if data and isinstance(data, dict):
+        data = urllib.parse.urlencode(data).encode('utf-8')
+    req = urllib.request.Request(domain_data['url_main'] + path, data=data)
     req.add_header('CheckiOApiKey', domain_data['key'])
     req.add_header('X-CheckiO-Client-Version', STR_VERSION)
     try:
@@ -28,6 +30,14 @@ def get_mission_info(mission_slug):
 
 def get_user_missions():
     return api_request('/api/user-missions/')
+
+def save_code(code, task_id):
+    domain_data = conf.default_domain_data
+    return api_request('/mission/js-task-save/', {
+        'code': code,
+        'task_num': task_id,
+        'runner': domain_data['center_slug']
+    })
 
 
 def center_request(path, data):
