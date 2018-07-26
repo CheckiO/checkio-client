@@ -7,14 +7,18 @@ source_directory = dirname(abspath(__file__))
 
 setup(
     name='checkio_client',
-    version='0.0.2',
-    description='CheckiO command line interface for playing CheckiO',
+    version='0.1.0',
+    description='Command line interface for playing CheckiO games',
     author='CheckiO',
     author_email='a.lyabah@checkio.org',
     url='https://github.com/CheckiO/checkio-client',
-    download_url='https://github.com/CheckiO/checkio-client/tarball/0.0.1',
     packages=find_packages(),
     entry_points={
         'console_scripts': ['checkio = checkio_client.runner:main'],
     },
+    classifiers=(
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ),
 )

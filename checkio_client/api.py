@@ -18,7 +18,7 @@ def api_request(path, data=None):
     except HTTPError as e:
         resp = json.loads(e.read().decode('utf-8'))
         if resp.get('error') == 'OldClient':
-            raise ValueError('Please update CheckiO console tool.')
+            raise ValueError('Please update CheckiO console tool. pip3 install --upgrade checkio_client')
         else:
             raise
 

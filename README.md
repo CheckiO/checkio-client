@@ -6,7 +6,7 @@ checkio-client
 **python3 is required**
 
 ```bash
-$ pip install --force-reinstall git+https://github.com/CheckiO/checkio-client.git
+$ pip3 install --upgrade checkio_client
 ```
 
 or if you plan to contribute, you can create a clone in a specific folder and install from there
