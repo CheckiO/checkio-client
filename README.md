@@ -1,6 +1,12 @@
 checkio-client
 ===================
 
+## About
+
+Command-line tool for playing [**CheckiO games**](https://checkio.org).
+
+[**CheckiO**](https://checkio.org) - Coding games for beginners and advanced programmers where you can improve your coding skills by solving engaging challenges.
+
 ## Installation
 
 **python3 is required**
