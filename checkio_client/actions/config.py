@@ -29,8 +29,8 @@ def main(args):
 
     domain_data = conf.domains[new_domain]
 
-    print('What is your KEY for {}?'.format(domain_data['url_main']))
-    print('You can find one on {}/mission/add/'.format(domain_data['url_main']))
+    print('What is your KEY for {} ?'.format(domain_data['url_main']))
+    print('You can find one on {}/profile/edit/'.format(domain_data['url_main']))
     while True:
         new_key = input('KEY:').strip()
         if not new_key:
