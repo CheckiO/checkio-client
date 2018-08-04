@@ -84,8 +84,10 @@ p_sync.add_argument('--exclude-unseen', action='store_true',
     help='exclude solutions for mission you haven\'t opened')
 p_sync.add_argument('--exclude-solved', action='store_true',
     help='exclude solutions for mission you have solved already')
-
 p_sync.set_defaults(module='sync')
+
+p_web = subparsers.add_parser('webplugin', help='is using strictly for Chrome and Mozilla extensions')
+p_web.set_defaults(module='webplugin')
 
 def apply_main_args(args):
     try:

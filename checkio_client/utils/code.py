@@ -115,10 +115,13 @@ def code_for_send(code):
     return code_for_check(code).replace('\r', '').strip()
 
 
-def solutions_paths(folder=None):
+def solutions_paths(folder=None, extension=None):
     domain_data = conf.default_domain_data
     if folder is None:
         folder = domain_data.get('solutions')
+
+    if extension is None:
+        extension = domain_data.get('extension')
 
     paths = {}
     if not os.path.exists(folder):
@@ -126,7 +129,7 @@ def solutions_paths(folder=None):
 
     for (dirpath, dirnames, filenames) in os.walk(folder):
         for filename in filenames:
-            if not filename.endswith('.' + domain_data['extension']):
+            if not filename.endswith('.' + extension):
                 continue
             full_path = os.path.join(dirpath, filename)
             with open(full_path, 'r', encoding='utf-8') as fh:
