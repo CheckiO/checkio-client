@@ -1,5 +1,5 @@
 import sys
-import os
+import subprocess
 import time
 
 from checkio_client.settings import conf
@@ -72,7 +72,7 @@ def main(args):
             data = restore(block[1])
         else:
             print(block)
-    
+
 
 def main_run(args):
     if getattr(args, 'check', False):
@@ -85,7 +85,7 @@ def main_run(args):
     domain_data = conf.default_domain_data
 
     if 'executable' in domain_data:
-        return os.system(' '.join((domain_data['executable'], filename)))
+        return subprocess.call((domain_data['executable'], filename))
 
     with open(filename, encoding="utf-8") as fh:
         data = run_solution(code_for_check(fh.read()))
