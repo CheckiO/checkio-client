@@ -65,7 +65,7 @@ def read_next_message():
     text_length = struct.unpack('i', text_length_bytes)[0]
     text = sys.stdin.buffer.read(text_length).decode('utf-8')
     data = json.loads(text)
-    getattr(Actions, data['do'].replace('.', '__'))(data)
+    getattr(Actions, data['do'].replace(':', '__'))(data)
 
 def main(args):
     while True:
