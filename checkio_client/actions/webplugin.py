@@ -5,6 +5,15 @@ import struct
 from checkio_client.settings import conf
 from checkio_client.utils.code import solutions_paths
 
+
+'''
+--> {"event": "plugin:readFile", "fileName": "{PATH}"}
+<-- {"event": "tools:readFile", "fileName": "{FULL_PATH}", "content": "{FILE_CONTENT}"}
+
+--> {"event": "plugin:writeFile", "fileName": "{PATH}", "content": "{FILE_CONTENT}"}
+<-- {"event": "tools:writeFile", "fileName": "{FULL_PATH}"}
+'''
+
 if sys.platform == "win32":
     import os, msvcrt
     msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
@@ -12,36 +21,33 @@ if sys.platform == "win32":
 
 class Actions:
     @staticmethod
-    def mission_file(data):
-        domain = data['domain']
-        domain_data = conf.domains[domain]
-        mission = data['mission']
-        if 'solutions' not in domain_data:
-            return send_message({
-                    'error': 'Solutions folder is not defined for domain {}'.format(domain)
-                })
-
-
-        paths = solutions_paths(domain_data['solutions'], domain_data['extension'])
-        send_message({
-            'filename': paths[mission]
-        })
-
-    @staticmethod
-    def read_file(data):
+    def plugin__readFile(data):
         filename = data['filename']
+        mission, domain = filename.split('.')
+        domain_data = conf.domains[domain]
+        paths = solutions_paths(domain_data['solutions'], domain_data['extension'])
+        filename = paths[mission]
+
         send_message({
-                'data': open(filename, encoding='utf-8').read()
+                "event": "tools:readFile",
+                "content": open(filename, encoding='utf-8').read(),
+                "fileName": filename
             })
 
     @staticmethod
-    def write_file(data):
+    def plugin__writeFile(data):
         filename = data['filename']
-        text = data['text']
+        mission, domain = filename.split('.')
+        domain_data = conf.domains[domain]
+        paths = solutions_paths(domain_data['solutions'], domain_data['extension'])
+        filename = paths[mission]
+
+        text = data['content']
         with open(filename, 'w', encoding='utf-8') as fh:
             fh.write(text)
         send_message({
-                'done': 'OK'
+                "event": "tools:readFile",
+                "fileName": "filename"
             })
 
 def send_message(data):
@@ -59,7 +65,7 @@ def read_next_message():
     text_length = struct.unpack('i', text_length_bytes)[0]
     text = sys.stdin.buffer.read(text_length).decode('utf-8')
     data = json.loads(text)
-    getattr(Actions, data['do'])(data)
+    getattr(Actions, data['do'].replace('.', '__'))(data)
 
 def main(args):
     while True:
