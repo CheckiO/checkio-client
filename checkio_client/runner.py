@@ -100,8 +100,9 @@ def apply_main_args(args):
         print('Key for domain ' + conf.default_domain + ' is not defined')
         return True
 
-def main():
-    args = parser.parse_args()
+def main(args=None):
+    if args is None:
+        args = parser.parse_args()
     try:
         module = import_module('checkio_client.actions.' + args.module)
     except AttributeError:

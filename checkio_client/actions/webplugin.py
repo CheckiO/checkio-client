@@ -12,6 +12,8 @@ from checkio_client.utils.code import solutions_paths
 
 --> {"event": "plugin:writeFile", "fileName": "{PATH}", "content": "{FILE_CONTENT}"}
 <-- {"event": "tools:writeFile", "fileName": "{FULL_PATH}"}
+
+--> {"event": "plugin:test", "a": 1, "b": 2}
 '''
 
 if sys.platform == "win32":
@@ -50,6 +52,13 @@ class Actions:
                 "fileName": "filename"
             })
 
+    @staticmethod
+    def plugin__test(data):
+        send_message({
+            "event": "tools:Answer",
+            "answer": int(data["a"]) + int(data["b"])
+        })
+
 def send_message(data):
     message = json.dumps(data).encode('utf-8')
     sys.stdout.buffer.write(struct.pack('I', len(message)))
@@ -65,7 +74,7 @@ def read_next_message():
     text_length = struct.unpack('i', text_length_bytes)[0]
     text = sys.stdin.buffer.read(text_length).decode('utf-8')
     data = json.loads(text)
-    getattr(Actions, data['do'].replace(':', '__'))(data)
+    getattr(Actions, data['event'].replace(':', '__'))(data)
 
 def main(args):
     while True:
