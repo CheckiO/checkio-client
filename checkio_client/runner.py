@@ -9,7 +9,7 @@ subparsers = parser.add_subparsers(help='subcommands')
 
 p_config = subparsers.add_parser('config', help='configure the tool')
 p_config.add_argument('--key', type=str)
-p_config.set_defaults(module='config')
+p_config.set_defaults(module='config', config_not_required=True)
 
 #sub_creation = parser.add_subparsers(title='Mission Creation')
 
@@ -86,12 +86,15 @@ p_sync.add_argument('--exclude-solved', action='store_true',
     help='exclude solutions for mission you have solved already')
 p_sync.set_defaults(module='sync')
 
-p_web = subparsers.add_parser('webplugin', help='is using strictly for Chrome and Mozilla extensions')
-p_web.set_defaults(module='webplugin')
+p_plugin = subparsers.add_parser('install-plugin', help='configure the tool')
+p_plugin.set_defaults(module='plugin', func='install')
 
-def apply_main_args(args):
+p_plugin = subparsers.add_parser('uninstall_plugin', help='configure the tool')
+p_plugin.set_defaults(module='plugin', func='uninstall')
+
+def apply_main_args(args=None):
     try:
-        conf.set_default_domain(args.domain)
+        conf.set_default_domain(args.domain if args is not None else conf.default_domain)
     except ValueError as e:
         print(e)
         return True
@@ -100,9 +103,8 @@ def apply_main_args(args):
         print('Key for domain ' + conf.default_domain + ' is not defined')
         return True
 
-def main(args=None):
-    if args is None:
-        args = parser.parse_args()
+def main():
+    args = parser.parse_args()
     try:
         module = import_module('checkio_client.actions.' + args.module)
     except AttributeError:
@@ -115,7 +117,7 @@ def main(args=None):
 
         parser.print_help()
     else:
-        if apply_main_args(args):
+        if not getattr(args, 'config_not_required', False) and apply_main_args(args):
             return
         if hasattr(args, 'func'):
             func_name = args.func

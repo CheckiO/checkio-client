@@ -4,6 +4,8 @@ import stat
 from checkio_client.settings import conf
 from html.parser import HTMLParser
 
+START_ENV_LINE = '#!/usr/bin/env checkio'
+
 def get_end_desc_line():
     comment = conf.default_domain_data['comment']
     return comment + 'END_DESC'
@@ -49,6 +51,17 @@ class DescriptionParser(HTMLParser):
 
         self.escaped += data
 
+def gen_filename(slug, station, folder=None):
+    domain_data = conf.default_domain_data
+    if folder is None:
+        folder = domain_data.get('solutions')
+    return os.path.join(folder, station, slug.replace('-', '_') + '.' + domain_data['extension'])
+
+def gen_env_line(slug):
+    return '#!/usr/bin/env checkio --domain={domain} run {slug}'.format(
+            slug=slug,
+            domain=conf.default_domain
+        )
 
 
 def escape_description(text):
@@ -75,11 +88,7 @@ def code_for_file(slug, code, html_description=None):
             code.strip()
         )
 
-    return '#!/usr/bin/env checkio --domain={domain} run {slug}\n\n{code}'.format(
-            slug=slug,
-            code=code.replace('\r', ''),
-            domain=conf.default_domain
-        )
+    return gen_env_line(slug) + '\n\n' + code.replace('\r', '')
 
 
 def init_code_file(filename, code):
@@ -95,7 +104,7 @@ def init_code_file(filename, code):
 def code_for_check(code):
     comment = conf.default_domain_data['comment']
     lines = code.split('\n')
-    if lines[0].startswith('#!/usr/bin/env checkio'):
+    if lines[0].startswith(START_ENV_LINE):
         lines[0] = ''
 
     end_line = get_end_desc_line()
@@ -113,6 +122,16 @@ def code_for_check(code):
 
 def code_for_send(code):
     return code_for_check(code).replace('\r', '').strip()
+
+def code_for_sync(code):
+    delimiter = get_end_desc_line()
+    if delimiter  in code:
+        return code.split(delimiter + '\n')[-1]
+    else:
+        if code.startswith(START_ENV_LINE):
+            return code[code.index('\n') + 1:]
+        else:
+            return code
 
 
 def solutions_paths(folder=None, extension=None):

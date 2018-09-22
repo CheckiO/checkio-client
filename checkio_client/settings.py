@@ -31,6 +31,8 @@ class Config(configparser.ConfigParser):
             'comment': '// '
         }
     }
+
+    inter_to_domain = {v['center_slug']: k for k,v in domains.items()}
     default_domain = 'py'
 
     repo_template = 'https://github.com/CheckiO/checkio-mission-template.git'
@@ -63,6 +65,9 @@ class Config(configparser.ConfigParser):
         if domain not in self.domains:
             raise ValueError('Wrong Domain')
         setattr(self, 'default_domain', domain)
+
+    def set_default_domain_by_inter(self, interpreter):
+        self.set_default_domain(self.inter_to_domain[interpreter])
 
     def open(self):
         self.read(self.filename)

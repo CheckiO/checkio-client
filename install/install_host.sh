@@ -20,7 +20,7 @@ else
   fi
 fi
 
-HOST_NAME=com.google.chrome.example.echo
+HOST_NAME=com.google.chrome.checkio.client
 
 # Create directory to store native messaging host.
 mkdir -p "$TARGET_DIR"
@@ -34,6 +34,7 @@ ESCAPED_HOST_PATH=${HOST_PATH////\\/}
 sed -i -e "s/HOST_PATH/$ESCAPED_HOST_PATH/" "$TARGET_DIR/$HOST_NAME.json"
 
 # Set permissions for the manifest so that all users can read it.
+echo "$TARGET_DIR"
 chmod o+r "$TARGET_DIR/$HOST_NAME.json"
 
 echo "Native messaging host $HOST_NAME has been installed."

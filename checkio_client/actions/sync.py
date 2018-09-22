@@ -2,7 +2,8 @@ import os
 import time
 
 from checkio_client.api import get_user_missions, save_code
-from checkio_client.utils.code import code_for_file, init_code_file, code_for_send, solutions_paths
+from checkio_client.utils.code import code_for_file, init_code_file, code_for_send,\
+                            solutions_paths, gen_filename
 from checkio_client.settings import conf
 
 def main(args):
@@ -40,7 +41,7 @@ def main(args):
 
         # file exist
         if mission not in paths:
-            filename = os.path.join(folder, item['stationName'], mission.replace('-', '_') + '.' + domain_data['extension'])
+            filename = gen_filename(mission, item['stationName'], folder)
             init_code_file(filename, output)
             print(filename + ' - Created')
             continue
