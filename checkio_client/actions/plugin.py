@@ -66,8 +66,15 @@ def read_install_steps():
             fh
         )
 
+def is_installed():
+    return os.path.exists(INSTALL_STEPS_FILE)
+
 
 def install(args=None):
+    if is_installed():
+        print('Plugin was installed before. Uninstallation...')
+        uninstall()
+        
     globals()['install_' + platform.system().lower()]()
     save_install_steps()
     print('Installation Complete!')
@@ -152,7 +159,7 @@ def uninstall_new_file(filename):
     else:
         print('Remove file ' + filename)
 
-def new_reg_cur_user(reg_key):
+def uninstall_new_reg_cur_user(reg_key):
     import winreg
     try:
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, reg_key)
