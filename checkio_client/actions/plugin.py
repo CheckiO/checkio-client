@@ -35,6 +35,11 @@ FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
 
 FOLDER_WINDOW = conf.foldername
 WIN_REG_KEY = r'Software\Google\Chrome\NativeMessagingHosts\com.google.chrome.checkio.client'
+WIN_BAT_FILE = 'web_plugin.bat'
+
+BAT_FILE_SCRIPT = '''@echo off
+{executable} {py_script}
+'''
 
 def install(args=None):
     globals()['install_' + platform.system().lower()]()
@@ -57,7 +62,7 @@ def install_linux():
 
     install_x(folder)
 
-def install_x(folder):
+def install_x(folder, win_bat=None):
     conf_filename = os.path.join(folder, FILENAME)
     script_filename = os.path.join(conf.foldername, 'checkio_web_plugin.py')
 
@@ -71,18 +76,29 @@ def install_x(folder):
     print('Init Config File ' + conf_filename)
 
     with open(conf_filename, 'w') as fh:
-        fh.write(CONFIG_X.replace('HOST', script_filename))
+        fh.write(CONFIG_X.replace('HOST', win_bat or script_filename))
 
     st = os.stat(conf_filename)
     os.chmod(conf_filename, st.st_mode | stat.S_IRUSR)
-    return conf_filename
+    return (conf_filename, script_filename)
 
 def install_windows():
-    conf_filename = install_x(FOLDER_WINDOW)
+    (conf_filename, script_filename) = install_x(FOLDER_WINDOW, WIN_BAT_FILE)
+
+    bat_file = os.path.join(FOLDER_WINDOW, WIN_BAT_FILE)
+    print('Init Bat File ' + bat_file)
+
+    with open(bat_file, 'w') as fh:
+        fh.write(BAT_FILE_SCRIPT.format(
+            executable=sys.executable,
+            py_script=script_filename
+        ))
+
+    print('Init Registry Key')
+    
     import winreg
     reg_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, WIN_REG_KEY)
     winreg.SetValueEx(reg_key, None, 0, winreg.REG_SZ, conf_filename)
-    print('Init Registry Key')
 
 def uninstall(args=None):
     globals()['uninstall_' + platform.system().lower()]()
