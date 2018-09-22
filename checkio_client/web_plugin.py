@@ -143,6 +143,12 @@ def main():
     while True:
         try:
             ret = read_next_message()
+        except CheckiOClientError as e:
+            send_message({
+                'do': 'error',
+                'type': e.__class__.__name__,
+                'text': str(e)
+            })
         except Exception as e:
             send_message({
                 'do': 'error',
