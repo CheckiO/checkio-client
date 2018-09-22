@@ -13,23 +13,6 @@ from checkio_client.utils.code import solutions_paths, code_for_sync,\
                                     init_code_file, gen_env_line
 
 
-'''
---> {"event": "plugin:readFile", "fileName": "{PATH}"}
-<-- {"event": "tools:readFile", "fileName": "{FULL_PATH}", "content": "{FILE_CONTENT}"}
-
---> {"event": "plugin:writeFile", "fileName": "{PATH}", "content": "{FILE_CONTENT}"}
-<-- {"event": "tools:writeFile", "fileName": "{FULL_PATH}"}
-
---> {"event": "plugin:test", "a": 1, "b": 2}
-
---> {
-        'do': 'initContent',
-        'content': this.getCodeValue(),
-        'slug': 'non-unique-elements',
-        'interpreter': 'python-3'
-    }
-'''
-
 class CheckiOClientError(Exception):
     def __init__(self, text):
         self.text = text
