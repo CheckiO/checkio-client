@@ -3,6 +3,7 @@ import getpass
 import os
 import sys
 import stat
+import json
 
 from checkio_client.settings import conf
 
@@ -41,9 +42,34 @@ BAT_FILE_SCRIPT = '''@echo off
 {executable} {py_script}
 '''
 
+INSTALL_STEPS = []
+INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'web_plugin_install_steps.json')
+
+INS_NEW_FILE = 'new_file'
+INS_NEW_REG = 'new_reg_cur_user'
+
+
+
+def add_install_step(name, value):
+    INSTALL_STEPS.append([name, value])
+
+def save_install_steps():
+    with open(INSTALL_STEPS_FILE, 'w', encoding='utf-8') as fh:
+        json.dump(
+            INSTALL_STEPS,
+            fh
+        )
+
+def read_install_steps():
+    with open(INSTALL_STEPS_FILE, 'r', encoding='utf-8') as fh:
+        return json.load(
+            fh
+        )
+
+
 def install(args=None):
     globals()['install_' + platform.system().lower()]()
-
+    save_install_steps()
     print('Installation Complete!')
 
 def install_darwin():
@@ -69,6 +95,7 @@ def install_x(folder, win_bat=None):
     print('Init Script File ' + script_filename)
     with open(script_filename, 'w') as fh:
         fh.write(EXEC_SCRIPT.replace('EXEC', sys.executable))
+    add_install_step(INS_NEW_FILE, script_filename)
 
     st = os.stat(script_filename)
     os.chmod(script_filename, st.st_mode | stat.S_IEXEC)
@@ -77,6 +104,7 @@ def install_x(folder, win_bat=None):
 
     with open(conf_filename, 'w') as fh:
         fh.write(CONFIG_X.replace('HOST', win_bat or script_filename))
+    add_install_step(INS_NEW_FILE, conf_filename)
 
     st = os.stat(conf_filename)
     os.chmod(conf_filename, st.st_mode | stat.S_IRUSR)
@@ -93,13 +121,44 @@ def install_windows():
             executable=sys.executable,
             py_script=script_filename
         ))
+    add_install_step(INS_NEW_FILE, bat_file)
 
     print('Init Registry Key')
-    
+
     import winreg
     reg_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, WIN_REG_KEY)
     winreg.SetValueEx(reg_key, None, 0, winreg.REG_SZ, conf_filename)
+    add_install_step(INS_NEW_REG, WIN_REG_KEY)
 
 def uninstall(args=None):
-    globals()['uninstall_' + platform.system().lower()]()
+    try:
+        steps = read_install_steps()
+    except FileNotFoundError:
+        print('Plugin was not installed')
+        return
+
+    for step in steps:
+        globals()['uninstall_' + step[0]](step[1])
+
+    os.remove(INSTALL_STEPS_FILE)
+
+    print('Uninstall Complete')
+
+def uninstall_new_file(filename):
+    try:
+        os.remove(filename)
+    except Exception as e:
+        print('Unable to remove file {}: {}'.format(filename, e))
+    else:
+        print('Remove file ' + filename)
+
+def new_reg_cur_user(reg_key):
+    import winreg
+    try:
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, reg_key)
+    except Exception as e:
+        print('Unable to remove Registry Key {}: {}'.format(reg_key, e))
+    else:
+        print('Remove Registry Key ' + reg_key)
+
 

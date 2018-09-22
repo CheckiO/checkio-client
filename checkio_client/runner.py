@@ -89,7 +89,7 @@ p_sync.set_defaults(module='sync')
 p_plugin = subparsers.add_parser('install-plugin', help='configure the tool')
 p_plugin.set_defaults(module='plugin', func='install')
 
-p_plugin = subparsers.add_parser('uninstall_plugin', help='configure the tool')
+p_plugin = subparsers.add_parser('uninstall-plugin', help='configure the tool')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
 def apply_main_args(args=None):
