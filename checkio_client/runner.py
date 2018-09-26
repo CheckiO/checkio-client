@@ -86,7 +86,9 @@ p_sync.add_argument('--exclude-solved', action='store_true',
     help='exclude solutions for mission you have solved already')
 p_sync.set_defaults(module='sync')
 
-p_plugin = subparsers.add_parser('install-plugin', help='configure the tool')
+p_plugin = subparsers.add_parser('install-plugin', help='Install Web Plugin')
+p_plugin.add_argument('--ff', action='store_true',
+     help='install for FireFox (for Chrome instead)')
 p_plugin.set_defaults(module='plugin', func='install')
 
 p_plugin = subparsers.add_parser('uninstall-plugin', help='configure the tool')

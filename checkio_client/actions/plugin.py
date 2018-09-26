@@ -48,6 +48,36 @@ INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'web_plugin_install_steps.jso
 INS_NEW_FILE = 'new_file'
 INS_NEW_REG = 'new_reg_cur_user'
 
+INSTALL_URL = 'http://www.checkio.org/local-editor/chrome/extension/'
+
+def update_global_ff():
+    global CONFIG_X
+    CONFIG_X = '''{
+  "name": "com.google.chrome.checkio.client",
+  "description": "Example host for native messaging",
+  "path": "HOST",
+  "type": "stdio",
+  "allowed_extensions": [ "{c7e3ccfd-0398-411b-8607-fa4ae25b4cd3}" ]
+}'''
+
+    global FOLDER_DARWIN_ROOT
+    FOLDER_DARWIN_ROOT = '/Library/Application Support/Mozilla/NativeMessagingHosts/'
+    global FOLDER_DARWIN_USER
+    FOLDER_DARWIN_USER = '~/Library/Application Support/Mozilla/NativeMessagingHosts/'
+    FOLDER_DARWIN_USER = os.path.expanduser(FOLDER_DARWIN_USER)
+
+    global FOLDER_LINUX_ROOT
+    FOLDER_LINUX_ROOT = '/usr/lib/mozilla/native-messaging-hosts/'
+    global FOLDER_LINUX_USER
+    FOLDER_LINUX_USER = '~/.mozilla/native-messaging-hosts/'
+    FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
+
+    global WIN_REG_KEY
+    WIN_REG_KEY = r'Software\Mozilla\NativeMessagingHosts\com.google.chrome.checkio.client'
+
+    global INSTALL_URL
+    INSTALL_URL = 'http://www.checkio.org/local-editor/firefox/extension/'
+
 
 
 def add_install_step(name, value):
@@ -74,10 +104,14 @@ def install(args=None):
     if is_installed():
         print('Plugin was installed before. Uninstallation...')
         uninstall()
-        
+
+    if args.ff:
+        update_global_ff()
+
     globals()['install_' + platform.system().lower()]()
     save_install_steps()
     print('Installation Complete!')
+    print('You can not install browser extension ' + INSTALL_URL)
 
 def install_darwin():
     if IS_ROOT:
@@ -100,6 +134,7 @@ def install_x(folder, win_bat=None):
     script_filename = os.path.join(conf.foldername, 'checkio_web_plugin.py')
 
     print('Init Script File ' + script_filename)
+    os.makedirs(os.path.dirname(script_filename), exist_ok=True)
     with open(script_filename, 'w') as fh:
         fh.write(EXEC_SCRIPT.replace('EXEC', sys.executable))
     add_install_step(INS_NEW_FILE, script_filename)
@@ -108,7 +143,7 @@ def install_x(folder, win_bat=None):
     os.chmod(script_filename, st.st_mode | stat.S_IEXEC)
 
     print('Init Config File ' + conf_filename)
-
+    os.makedirs(os.path.dirname(conf_filename), exist_ok=True)
     with open(conf_filename, 'w') as fh:
         fh.write(CONFIG_X.replace('HOST', win_bat or script_filename))
     add_install_step(INS_NEW_FILE, conf_filename)
