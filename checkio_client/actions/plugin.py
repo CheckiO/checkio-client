@@ -24,6 +24,8 @@ from checkio_client.web_plugin import main
 main()
 '''
 
+EXEC_SCRIPT_NAME = 'checkio_chrome_plugin.py'
+
 FILENAME = 'com.google.chrome.checkio.client.json'
 
 FOLDER_DARWIN_ROOT = "/Library/Google/Chrome/NativeMessagingHosts"
@@ -59,6 +61,9 @@ def update_global_ff():
   "type": "stdio",
   "allowed_extensions": [ "{c7e3ccfd-0398-411b-8607-fa4ae25b4cd3}" ]
 }'''
+
+    global EXEC_SCRIPT_NAME
+    EXEC_SCRIPT_NAME = 'checkio_ff_plugin.py'
 
     global FOLDER_DARWIN_ROOT
     FOLDER_DARWIN_ROOT = '/Library/Application Support/Mozilla/NativeMessagingHosts/'
@@ -104,17 +109,19 @@ def is_installed():
 
 
 def install(args=None):
-    if is_installed():
-        print('Plugin was installed before. Uninstallation...')
-        uninstall()
-
     if args.ff:
         update_global_ff()
+
+    if is_installed():
+        print('Plugin was installed before. Uninstallation...')
+        uninstall(args)
 
     globals()['install_' + platform.system().lower()]()
     save_install_steps()
     print('Installation Complete!')
+    print()
     print('You can not install browser extension ' + INSTALL_URL)
+    print()
 
 def install_darwin():
     if IS_ROOT:
@@ -134,7 +141,7 @@ def install_linux():
 
 def install_x(folder, win_bat=None):
     conf_filename = os.path.join(folder, FILENAME)
-    script_filename = os.path.join(conf.foldername, 'checkio_web_plugin.py')
+    script_filename = os.path.join(conf.foldername, EXEC_SCRIPT_NAME)
 
     print('Init Script File ' + script_filename)
     os.makedirs(os.path.dirname(script_filename), exist_ok=True)
@@ -178,7 +185,7 @@ def install_windows():
 def uninstall(args=None):
     if args.ff:
         update_global_ff()
-        
+
     try:
         steps = read_install_steps()
     except FileNotFoundError:
