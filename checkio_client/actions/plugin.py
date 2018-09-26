@@ -43,7 +43,7 @@ BAT_FILE_SCRIPT = '''@echo off
 '''
 
 INSTALL_STEPS = []
-INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'web_plugin_install_steps.json')
+INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'install_steps_chrome.json')
 
 INS_NEW_FILE = 'new_file'
 INS_NEW_REG = 'new_reg_cur_user'
@@ -74,6 +74,9 @@ def update_global_ff():
 
     global WIN_REG_KEY
     WIN_REG_KEY = r'Software\Mozilla\NativeMessagingHosts\com.google.chrome.checkio.client'
+
+    global INSTALL_STEPS_FILE
+    INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'install_steps_ff.json')
 
     global INSTALL_URL
     INSTALL_URL = 'http://www.checkio.org/local-editor/firefox/extension/'
@@ -173,6 +176,9 @@ def install_windows():
     add_install_step(INS_NEW_REG, WIN_REG_KEY)
 
 def uninstall(args=None):
+    if args.ff:
+        update_global_ff()
+        
     try:
         steps = read_install_steps()
     except FileNotFoundError:

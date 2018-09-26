@@ -91,7 +91,9 @@ p_plugin.add_argument('--ff', action='store_true',
      help='install for FireFox (for Chrome instead)')
 p_plugin.set_defaults(module='plugin', func='install')
 
-p_plugin = subparsers.add_parser('uninstall-plugin', help='configure the tool')
+p_plugin = subparsers.add_parser('uninstall-plugin', help='Unstall Web Plugin')
+p_plugin.add_argument('--ff', action='store_true',
+     help='install for FireFox (for Chrome instead)')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
 def apply_main_args(args=None):
