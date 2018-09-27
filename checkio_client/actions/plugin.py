@@ -38,7 +38,7 @@ FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
 
 FOLDER_WINDOW = conf.foldername
 WIN_REG_KEY = r'Software\Google\Chrome\NativeMessagingHosts\com.google.chrome.checkio.client'
-WIN_BAT_FILE = 'web_plugin.bat'
+WIN_BAT_FILE = 'chrome_plugin.bat'
 
 BAT_FILE_SCRIPT = '''@echo off
 {executable} {py_script}
@@ -79,6 +79,8 @@ def update_global_ff():
 
     global WIN_REG_KEY
     WIN_REG_KEY = r'Software\Mozilla\NativeMessagingHosts\com.google.chrome.checkio.client'
+    global WIN_BAT_FILE
+    WIN_BAT_FILE = 'ff_plugin.bat'
 
     global INSTALL_STEPS_FILE
     INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'install_steps_ff.json')

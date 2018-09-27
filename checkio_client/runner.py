@@ -84,6 +84,8 @@ p_sync.add_argument('--exclude-unseen', action='store_true',
     help='exclude solutions for mission you haven\'t opened')
 p_sync.add_argument('--exclude-solved', action='store_true',
     help='exclude solutions for mission you have solved already')
+p_sync.add_argument('--configure-only', action='store_true',
+    help='do not synchronize file, only change tool configuration')
 p_sync.set_defaults(module='sync')
 
 p_plugin = subparsers.add_parser('install-plugin', help='Install Web Plugin')

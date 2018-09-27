@@ -21,6 +21,11 @@ def main(args):
             return
         print('Using folder "{}"'.format(folder))
 
+    if args.configure_only:
+        conf.default_domain_section['solutions'] = os.path.abspath(folder)
+        conf.save()
+        return
+
     paths = solutions_paths(folder)
 
     print('Requesting...')
