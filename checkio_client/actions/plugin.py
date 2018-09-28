@@ -122,7 +122,7 @@ def install(args=None):
     save_install_steps()
     print('Installation Complete!')
     print()
-    print('You can not install browser extension ' + INSTALL_URL)
+    print('You can now install browser extension ' + INSTALL_URL)
     print()
 
 def install_darwin():
