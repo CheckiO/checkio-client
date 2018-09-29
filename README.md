@@ -70,7 +70,7 @@ $ checkio init median checkio_solutions/median.py
 here you have two options to test your solution. The first one is by using the `checkio` command
 
 ```bash
-$ checkio init median checkio_solutions/median.py
+$ checkio check median
 ```
 
 and the second one is to simply execute the solution with `--check` argument (without it will simply run the solution)
