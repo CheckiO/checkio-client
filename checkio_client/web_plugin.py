@@ -105,7 +105,6 @@ def send_message(data):
     sys.stdout.flush()
 
 def read_next_message():
-    global conf
     text_length_bytes = sys.stdin.buffer.read(4)
     if len(text_length_bytes) == 0:
         sys.exit(0)
@@ -114,9 +113,7 @@ def read_next_message():
     text = sys.stdin.buffer.read(text_length).decode('utf-8')
     data = json.loads(text)
 
-    conf = Config()
-    if conf.exists():
-        conf.open()
+    conf.reload();
 
     return getattr(Actions, data['do'])(data)
 

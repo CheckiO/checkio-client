@@ -1,6 +1,7 @@
 import sys
 import os
 import configparser
+from copy import deepcopy
 
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
@@ -31,6 +32,8 @@ class Config(configparser.ConfigParser):
             'comment': '// '
         }
     }
+
+    _initial_domains = deepcopy(domains)
 
     inter_to_domain = {v['center_slug']: k for k,v in domains.items()}
     default_domain = 'py'
@@ -81,6 +84,10 @@ class Config(configparser.ConfigParser):
                 continue
             for key in self[section_name]:
                 self.domains[d_key][key] = self[section_name][key]
+
+    def reload(self):
+        self.domains = deepcopy(self._initial_domains)
+        self.open()
 
 conf = Config()
 if conf.exists():
