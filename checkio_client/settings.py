@@ -6,7 +6,7 @@ from copy import deepcopy
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 5)
+VERSION = (0, 1, 6)
 
 class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
