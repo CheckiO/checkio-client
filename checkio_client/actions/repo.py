@@ -2,6 +2,7 @@ from warnings import warn
 import sys
 import shutil
 import os
+import stat
 
 from checkio_client.settings import conf
 
@@ -51,7 +52,12 @@ def main_init(args):
 
     print('Reciving template mission from ' + template + ' ...')
     git.Repo.clone_from(template, folder)
-    shutil.rmtree(os.path.join(folder, '.git'))
+
+    def remove_readonly(func, path, execinfo):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    shutil.rmtree(os.path.join(folder, '.git'), onerror=remove_readonly)
+
     if args.repository:
         print('Send to git...')
         link_folder_to_repo(folder, args.repository)
