@@ -10,8 +10,10 @@ try:
 except ImportError:
     print('''
 if you want to work with repos please install GitPython
-You can do it by using pip3 install GitPython
-'''.strip())
+You can do it by doing:
+
+{} -mpip install GitPython
+'''.format(sys.executable))
     sys.exit()
 
 def link_folder_to_repo(folder, repository):
@@ -41,8 +43,14 @@ def main_init(args):
     if os.path.exists(folder):
         print('Folder exists already')
         return
-    print('Reciving template mission from ' + conf.repo_template + ' ...')
-    git.Repo.clone_from(conf.repo_template, folder)
+
+    if args.template:
+        template = args.template
+    else:
+        template = conf.repo_template
+
+    print('Reciving template mission from ' + template + ' ...')
+    git.Repo.clone_from(template, folder)
     shutil.rmtree(os.path.join(folder, '.git'))
     if args.repository:
         print('Send to git...')

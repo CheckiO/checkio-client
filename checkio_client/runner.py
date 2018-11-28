@@ -21,6 +21,10 @@ p_repo_init.add_argument('repository', type=str, nargs='?',
     metavar='repository',
     help='url to git repository')
 
+p_repo_init.add_argument('--template', type=str,
+    metavar='template',
+    help='url to git repository you want to take as a template')
+
 p_repo_init.set_defaults(module='repo', func='main_init')
 
 p_repo_link = subparsers.add_parser('linkrepo', help='folder with mission link to a repository')
@@ -30,7 +34,7 @@ p_repo_link.add_argument('folder', type=str, default='.', nargs=1,
 
 p_repo_link.add_argument('repository', type=str, nargs=1,
     metavar='repository',
-    help='url to git repository')
+    help='url to git repository of your mission')
 
 p_repo_link.set_defaults(module='repo', func='main_link')
 
