@@ -163,7 +163,12 @@ def main(args):
     global REPO_FOLDER
     REPO_FOLDER = args.folder[0]
     message = '{"do": "connect", "key": "' + AUTH_KEY + '"}'
-    loop = asyncio.get_event_loop()
+    if sys.platform == 'win32':
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        loop = asyncio.ProactorEventLoop()
+        asyncio.set_event_loop(loop)
+    else:
+        loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait([
         tcp_echo_client(message, loop),
         loop.create_server(EchoServerClientProtocol, '127.0.0.1', int(conf.local_uch_port))
