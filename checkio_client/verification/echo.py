@@ -7,6 +7,7 @@ echo = None
 
 def init(ip, port):
     global echo
+    print('CONNECT', ip, port)
     echo = telnetlib.Telnet(ip, port)
 
 

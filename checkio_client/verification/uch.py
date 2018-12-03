@@ -8,7 +8,8 @@ PREFIX = 'uch'
 TASK_NUM = sys.argv[2]
 SERVICE_PORT = int(sys.argv[3])
 
-print(SERVICE_PORT)
+#print('PORT')
+#print(SERVICE_PORT)
 echo.init('127.0.0.1', SERVICE_PORT)
 
 sys.path.insert(0, os.getenv('FOLDER_USER'))

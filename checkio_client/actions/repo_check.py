@@ -103,15 +103,16 @@ async def do_tester_start_process(data, writer):
     USER_RUNNER = data['runner']
     connection_id = data['connection_id']
     task_num = data['task_num']
-    proc = await asyncio.create_subprocess_exec(sys.executable,
+    proc = await asyncio.create_subprocess_shell(' '.join((sys.executable,
                                             conf.uch_file,
                                str(connection_id),
                                str(task_num),
-                               str(conf.local_uch_port),
+                               str(conf.local_uch_port))),
                                env={
                                  'PYTHONIOENCODING': 'utf8',
                                  'PYTHONUNBUFFERED': '0',
-                                 'FOLDER_USER': os.path.join(REPO_FOLDER, 'verification')
+                                 'FOLDER_USER': os.path.join(REPO_FOLDER, 'verification'),
+                                 'PYTHONHASHSEED': '1'
                              })
 
 async def do_tester_kill_process(data, writer):
@@ -125,6 +126,7 @@ async def do_tester_auth_error(data, writer):
     print('Wrong Key')
     sys.exit()
 
+#762 +
 
 class EchoServerClientProtocol(asyncio.Protocol):
 
