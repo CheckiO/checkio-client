@@ -114,6 +114,7 @@ async def do_tester_start_process(data, writer):
         'PYTHONUNBUFFERED': '0',
         'FOLDER_USER': os.path.join(REPO_FOLDER, 'verification')
     })
+    print('NEW!!!')
     proc = await asyncio.create_subprocess_shell(openline,
                                env=envs)
 

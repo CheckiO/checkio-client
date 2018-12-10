@@ -52,6 +52,16 @@ p_check_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
 p_check_after.set_defaults(module='check')
 
+p_autofill_repo = subparsers.add_parser('autofillrepo', help='Add tests for the mission and then execute the sommand to autofill all other fields in the template')
+p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
+    metavar='folder',
+    help='path to the repository folder')
+p_autofill_repo.add_argument('--js-function', type=str)
+p_autofill_repo.add_argument('--py-function', type=str,
+    metavar='py_func')
+p_autofill_repo.set_defaults(module='autofill')
+
+
 
 p_run_after = subparsers.add_parser('run', help='exec your solution')
 p_run_after.add_argument('mission', type=str, nargs=1, metavar='mission',
