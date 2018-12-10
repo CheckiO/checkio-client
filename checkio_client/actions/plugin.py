@@ -53,6 +53,9 @@ INS_NEW_REG = 'new_reg_cur_user'
 INSTALL_URL = 'http://www.checkio.org/local-editor/chrome/extension/'
 
 def update_global_ff():
+    global FILENAME
+    FILENAME = 'com.google.chrome.checkio.client.ff.json'
+
     global CONFIG_X
     CONFIG_X = '''{
   "name": "com.google.chrome.checkio.client",
