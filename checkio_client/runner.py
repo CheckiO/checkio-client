@@ -104,12 +104,16 @@ p_sync.set_defaults(module='sync')
 
 p_plugin = subparsers.add_parser('install-plugin', help='Install Web Plugin')
 p_plugin.add_argument('--ff', action='store_true',
-     help='install for FireFox (for Chrome instead)')
+     help='install for FireFox (insted of Chrome)')
+p_plugin.add_argument('--chromium', action='store_true',
+     help='install for Chromium (insted of Chrome)')
 p_plugin.set_defaults(module='plugin', func='install')
 
 p_plugin = subparsers.add_parser('uninstall-plugin', help='Unstall Web Plugin')
 p_plugin.add_argument('--ff', action='store_true',
-     help='install for FireFox (for Chrome instead)')
+     help='uninstall for FireFox (insted of Chrome)')
+p_plugin.add_argument('--chromium', action='store_true',
+     help='uninstall for Chromium (insted of Chrome)')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
 def apply_main_args(args=None):

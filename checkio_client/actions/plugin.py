@@ -10,7 +10,7 @@ from checkio_client.settings import conf
 IS_ROOT = getpass.getuser() == 'root'
 
 CONFIG_X = '''{
-  "name": "com.google.chrome.checkio.client",
+  "name": "com.checkio.client",
   "description": "Chrome Native Messaging API for CheckiO Client",
   "path": "HOST",
   "type": "stdio",
@@ -26,7 +26,7 @@ main()
 
 EXEC_SCRIPT_NAME = 'checkio_chrome_plugin.py'
 
-FILENAME = 'com.google.chrome.checkio.client.json'
+FILENAME = 'com.checkio.client.json'
 
 FOLDER_DARWIN_ROOT = "/Library/Google/Chrome/NativeMessagingHosts"
 FOLDER_DARWIN_USER = "~/Library/Application Support/Google/Chrome/NativeMessagingHosts"
@@ -36,8 +36,8 @@ FOLDER_LINUX_ROOT = "/etc/opt/chrome/native-messaging-hosts"
 FOLDER_LINUX_USER = "~/.config/google-chrome/NativeMessagingHosts"
 FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
 
-FOLDER_WINDOW = conf.foldername
-WIN_REG_KEY = r'Software\Google\Chrome\NativeMessagingHosts\com.google.chrome.checkio.client'
+FOLDER_WINDOW = os.path.join(conf.foldername, 'chrome')
+WIN_REG_KEY = r'Software\Google\Chrome\NativeMessagingHosts\com.checkio.client'
 WIN_BAT_FILE = 'chrome_plugin.bat'
 
 BAT_FILE_SCRIPT = '''@echo off
@@ -53,12 +53,9 @@ INS_NEW_REG = 'new_reg_cur_user'
 INSTALL_URL = 'http://www.checkio.org/local-editor/chrome/extension/'
 
 def update_global_ff():
-    global FILENAME
-    FILENAME = 'com.google.chrome.checkio.client.ff.json'
-
     global CONFIG_X
     CONFIG_X = '''{
-  "name": "com.google.chrome.checkio.client",
+  "name": "com.checkio.client",
   "description": "Example host for native messaging",
   "path": "HOST",
   "type": "stdio",
@@ -81,16 +78,45 @@ def update_global_ff():
     FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
 
     global WIN_REG_KEY
-    WIN_REG_KEY = r'Software\Mozilla\NativeMessagingHosts\com.google.chrome.checkio.client'
+    WIN_REG_KEY = r'Software\Mozilla\NativeMessagingHosts\com.checkio.client'
     global WIN_BAT_FILE
     WIN_BAT_FILE = 'ff_plugin.bat'
 
     global INSTALL_STEPS_FILE
     INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'install_steps_ff.json')
 
+    global FOLDER_WINDOW
+    FOLDER_WINDOW = os.path.join(conf.foldername, 'ff')
+
     global INSTALL_URL
     INSTALL_URL = 'http://www.checkio.org/local-editor/firefox/extension/'
 
+
+def update_global_chromium():
+
+    global EXEC_SCRIPT_NAME
+    EXEC_SCRIPT_NAME = 'checkio_chromium_plugin.py'
+
+    global FOLDER_DARWIN_ROOT
+    global FOLDER_DARWIN_USER
+    FOLDER_DARWIN_ROOT = "/Library/Application Support/Chromium/NativeMessagingHosts"
+    FOLDER_DARWIN_USER = "~/Library/Application Support/Chromium/NativeMessagingHosts"
+    FOLDER_DARWIN_USER = os.path.expanduser(FOLDER_DARWIN_USER)
+
+    global FOLDER_LINUX_ROOT
+    global FOLDER_LINUX_USER
+    FOLDER_LINUX_ROOT = '/etc/chromium/native-messaging-hosts/'
+    FOLDER_LINUX_USER = '~/.config/chromium/NativeMessagingHosts/'
+    FOLDER_LINUX_USER = os.path.expanduser(FOLDER_LINUX_USER)
+
+    global WIN_BAT_FILE
+    WIN_BAT_FILE = 'chromium_plugin.bat'
+
+    global INSTALL_STEPS_FILE
+    INSTALL_STEPS_FILE = os.path.join(conf.foldername, 'install_steps_chromium.json')
+
+    global FOLDER_WINDOW
+    FOLDER_WINDOW = os.path.join(conf.foldername, 'chromium')
 
 
 def add_install_step(name, value):
@@ -116,6 +142,9 @@ def is_installed():
 def install(args=None):
     if args.ff:
         update_global_ff()
+
+    if args.chromium:
+        update_global_chromium()
 
     if is_installed():
         print('Plugin was installed before. Uninstallation...')
@@ -190,6 +219,8 @@ def install_windows():
 def uninstall(args=None):
     if args.ff:
         update_global_ff()
+    if args.chromium:
+        update_global_chromium()
 
     try:
         steps = read_install_steps()

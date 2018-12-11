@@ -121,8 +121,6 @@ async def do_tester_start_process(data, writer):
 
 async def do_tester_kill_process(data, writer):
     PROCESS.kill()
-    #os.kill(PROCESS_PID, signal.SIGTERM)
-
 
 async def do_tester_to_process(data, writer):
     UCH_PROCESS.sendData(data['data'])
