@@ -16,6 +16,7 @@ USER_RUNNER = None
 CIO_WRITER = None
 UCH_PROCESS = None
 PROCESS_PID = None
+PROCESS = None
 
 async def do_tester_get_files(data, writer):
     ret = {}
@@ -99,6 +100,7 @@ async def do_tester_start_process(data, writer):
     global loop
     global USER_CODE
     global USER_RUNNER
+    global PROCESS
     USER_CODE = data['code']
     USER_RUNNER = data['runner']
     connection_id = data['connection_id']
@@ -114,12 +116,12 @@ async def do_tester_start_process(data, writer):
         'PYTHONUNBUFFERED': '0',
         'FOLDER_USER': os.path.join(REPO_FOLDER, 'verification')
     })
-    print('NEW!!!')
-    proc = await asyncio.create_subprocess_shell(openline,
+    PROCESS = await asyncio.create_subprocess_shell(openline,
                                env=envs)
 
 async def do_tester_kill_process(data, writer):
-    os.kill(PROCESS_PID, signal.SIGTERM)
+    PROCESS.kill()
+    #os.kill(PROCESS_PID, signal.SIGTERM)
 
 
 async def do_tester_to_process(data, writer):
