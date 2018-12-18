@@ -1,5 +1,6 @@
 import os
 import re
+import json
 
 def gen_args(len_args):
     return ', '.join(map(chr,range(ord('a'), ord('a') + len_args)))
@@ -18,13 +19,13 @@ if __name__ == '__main__':
     # These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
         args=gen_args(len(first_input)),
-        call=str(first_input)[1:-1]
+        call=json.dumps(first_input)[1:-1]
     ) + '\n'
     for test in tests['Basics']:
         ret += '    assert {funcname}({call}) == {out}\n'.format(
             funcname=funcname,
-            call=str(test['input'])[1:-1],
-            out=str(test['answer'])
+            call=json.dumps(test['input'])[1:-1],
+            out=json.dumps(test['answer'])
         )
     ret += '    print("Coding complete? Click \'Check\' to earn cool rewards!")\n'
     return ret
@@ -36,7 +37,7 @@ def gen_init_js(funcname, tests, args):
 function {funcname}({args}) {{
 
     // your code here
-    return 0;
+    return undefined;
 }}
 
 var assert = require('assert');
@@ -47,13 +48,13 @@ if (!global.is_checking) {{
     // These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
         args=gen_args(len(first_input)),
-        call=str(first_input)[1:-1]
+        call=json.dumps(first_input)[1:-1]
     ) + '\n'
     for test in tests['Basics']:
         ret += '    assert.{equal}({funcname}({call}), {out});\n'.format(
             funcname=funcname,
-            call=str(test['input'])[1:-1],
-            out=str(test['answer']),
+            call=json.dumps(test['input'])[1:-1],
+            out=json.dumps(test['answer']),
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
     ret += '''
@@ -64,8 +65,6 @@ if (!global.is_checking) {{
 
 
 def main(args):
-    # import ipdb
-    # ipdb.set_trace()
     folder = args.folder
     with open(os.path.join(folder, 'verification', 'tests.py')) as fh:
         globs = {}
@@ -77,8 +76,6 @@ def main(args):
         fh.write(gen_init_js(args.js_function, tests, args))
 
     referee_filename = os.path.join(folder, 'verification', 'referee.py')
-    # import ipdb
-    # ipdb.set_trace()
     with open(referee_filename) as fh:
         referee = fh.read()
         referee = re.sub(
@@ -94,8 +91,6 @@ def main(args):
         fh.write(referee)
 
     referee_filename = os.path.join(folder, 'editor', 'animation', 'init.js')
-    # import ipdb
-    # ipdb.set_trace()
     with open(referee_filename) as fh:
         referee = fh.read()
         referee = re.sub(
@@ -119,13 +114,13 @@ def main(args):
     for test in tests['Basics'][:2]:
         py_tests += '{funcname}({call}) == {out}\n'.format(
             funcname=args.py_function,
-            call=str(test['input'])[1:-1],
-            out=str(test['answer'])
+            call=json.dumps(test['input'])[1:-1],
+            out=json.dumps(test['answer'])
         )
         js_tests += '{funcname}({call}) == {out}\n'.format(
             funcname=args.js_function,
-            call=str(test['input'])[1:-1],
-            out=str(test['answer'])
+            call=json.dumps(test['input'])[1:-1],
+            out=json.dumps(test['answer'])
         )
 
     desc = re.sub(

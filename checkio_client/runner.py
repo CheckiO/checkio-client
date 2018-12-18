@@ -2,6 +2,7 @@ from checkio_client.settings import conf
 
 import argparse
 from importlib import import_module
+import sys
 
 parser = argparse.ArgumentParser(prog='checkio')
 parser.add_argument('--domain', type=str, default=conf.default_domain)
@@ -52,13 +53,12 @@ p_check_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
 p_check_after.set_defaults(module='check')
 
-p_autofill_repo = subparsers.add_parser('autofillrepo', help='Add tests for the mission and then execute the sommand to autofill all other fields in the template')
+p_autofill_repo = subparsers.add_parser('autofillrepo', help='fill up animation, referee, description and initial code by basic tests and passed names for function')
 p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
     metavar='folder',
     help='path to the repository folder')
 p_autofill_repo.add_argument('--js-function', type=str)
-p_autofill_repo.add_argument('--py-function', type=str,
-    metavar='py_func')
+p_autofill_repo.add_argument('--py-function', type=str)
 p_autofill_repo.set_defaults(module='autofill')
 
 
@@ -128,7 +128,8 @@ def apply_main_args(args=None):
         return True
 
 def main():
-    args = parser.parse_args()
+    call_args = sum(map(lambda a: a.split(), sys.argv[1:]), [])
+    args = parser.parse_args(call_args)
     try:
         module = import_module('checkio_client.actions.' + args.module)
     except AttributeError:

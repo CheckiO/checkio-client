@@ -1,10 +1,14 @@
 import os
+import sys
 import stat
 
 from checkio_client.settings import conf
 from html.parser import HTMLParser
 
-START_ENV_LINE = '#!/usr/bin/env checkio'
+if sys.platform.startswith('linux'):
+    START_ENV_LINE = '#!' + sys.argv[0]
+else:
+    START_ENV_LINE = '#!/usr/bin/env checkio'
 
 def get_end_desc_line():
     comment = conf.default_domain_data['comment']
@@ -58,7 +62,7 @@ def gen_filename(slug, station, folder=None):
     return os.path.join(folder, station, slug.replace('-', '_') + '.' + domain_data['extension'])
 
 def gen_env_line(slug):
-    return '#!/usr/bin/env checkio --domain={domain} run {slug}'.format(
+    return START_ENV_LINE + ' --domain={domain} run {slug}'.format(
             slug=slug,
             domain=conf.default_domain
         )
