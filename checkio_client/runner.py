@@ -3,6 +3,7 @@ from checkio_client.settings import conf
 import argparse
 from importlib import import_module
 import sys
+import shlex
 
 parser = argparse.ArgumentParser(prog='checkio')
 parser.add_argument('--domain', type=str, default=conf.default_domain)
@@ -128,7 +129,8 @@ def apply_main_args(args=None):
         return True
 
 def main():
-    call_args = sum(map(lambda a: a.split(), sys.argv[1:]), [])
+    # because of calling inside of #!/usr/bin/
+    call_args = sum(map(lambda a: shlex.split(a), sys.argv[1:]), [])
     args = parser.parse_args(call_args)
     try:
         module = import_module('checkio_client.actions.' + args.module)
