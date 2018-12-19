@@ -4,7 +4,7 @@ import time
 
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
-    restore, run_solution
+    restore, run_solution, lambda_game
 from checkio_client.utils.code import code_for_check, solutions_paths
 
 def get_filename(args):
@@ -20,8 +20,9 @@ def get_filename(args):
     except KeyError:
         raise ValueError('File for mission "{}"" not found'.format(mission))
 
+main = lambda_game('main_check')
 
-def main(args):
+def main_check_cio(args):
     filename = get_filename(args)
     mission = args.mission[0]
 
@@ -73,8 +74,12 @@ def main(args):
         else:
             print(block)
 
+def main_check_eoc(args):
+    pass
 
-def main_run(args):
+main_run = lambda_game('main_run')
+
+def main_run_cio(args):
     if getattr(args, 'check', False):
         args.check = False # to avoid recursion
         return main(args)
@@ -105,3 +110,6 @@ def main_run(args):
 
     print()
     return ret
+
+def main_run_eoc(args):
+    pass

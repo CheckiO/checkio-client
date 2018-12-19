@@ -3,8 +3,14 @@ import urllib.request
 import urllib.parse
 from urllib.error import HTTPError
 import json
+from checkio_client.settings import conf
 
 STR_VERSION = '.'.join(map(str, VERSION))
+
+def lambda_game(func_name):
+    def api_call(*args, **kwargs):
+        return globals()[func_name + '_' + conf.default_domain_data['game']](*args, **kwargs)
+    return api_call
 
 def api_request(path, data=None):
     domain_data = conf.default_domain_data
@@ -28,10 +34,17 @@ def get_mission_info(mission_slug):
     return api_request('/api/tasks/' + mission_slug + '/')
 
 
-def get_user_missions():
+get_user_missions = lambda_game('get_user_missions')
+
+def get_user_missions_cio():
     return api_request('/api/user-missions/')
 
-def save_code(code, task_id):
+def get_user_missions_eoc():
+    return {'objects': []}
+
+save_code = lambda_game('save_code')
+
+def save_code_cio(code, task_id):
     domain_data = conf.default_domain_data
     return api_request('/mission/js-task-save/', {
         'code': code,
@@ -39,6 +52,8 @@ def save_code(code, task_id):
         'runner': domain_data['center_slug']
     })
 
+def save_code_eoc(code, task_id):
+    pass
 
 def center_request(path, data):
     domain_data = conf.default_domain_data

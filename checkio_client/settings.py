@@ -20,7 +20,8 @@ class Config(configparser.ConfigParser):
             'center_slug': 'python-3',
             'executable': sys.executable,
             'extension': 'py',
-            'comment': '# '
+            'comment': '# ',
+            'game': 'cio'
         },
         'js': {
             'url_main': 'https://js.checkio.org',
@@ -29,7 +30,28 @@ class Config(configparser.ConfigParser):
             'center_slug': 'js-node',
             #'executable': 'node',
             'extension': 'js',
-            'comment': '// '
+            'comment': '// ',
+            'game': 'cio'
+        },
+        'epy': {
+            'url_main': 'https://empireofcode.com',
+            'server_port': 2325,
+            'server_host': 'api.empireofcode.com',
+            'center_slug': 'python-3',
+            'executable': sys.executable,
+            'extension': 'py',
+            'comment': '# ',
+            'game': 'eoc'
+        },
+        'ejs': {
+            'url_main': 'https://empireofcode.com',
+            'server_port': 2345,
+            'server_host': 'api.empireofcode.com',
+            'center_slug': 'js-node',
+            #'executable': 'node',
+            'extension': 'js',
+            'comment': '// ',
+            'game': 'eoc'
         }
     }
 
