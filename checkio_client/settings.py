@@ -6,11 +6,14 @@ from copy import deepcopy
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 12)
+VERSION = (0, 1, 13)
 
 class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
+    editor = 'open'
+    if sys.platform.startswith('linux'):
+        editor = 'xdg-open'
 
     domains = {
         'py': {
@@ -20,7 +23,8 @@ class Config(configparser.ConfigParser):
             'center_slug': 'python-3',
             'executable': sys.executable,
             'extension': 'py',
-            'comment': '# '
+            'comment': '# ',
+            'editor': editor
         },
         'js': {
             'url_main': 'https://js.checkio.org',
@@ -29,7 +33,8 @@ class Config(configparser.ConfigParser):
             'center_slug': 'js-node',
             #'executable': 'node',
             'extension': 'js',
-            'comment': '// '
+            'comment': '// ',
+            'editor': editor
         }
     }
 
