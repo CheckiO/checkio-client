@@ -152,6 +152,7 @@ def install(args=None):
 
     globals()['install_' + platform.system().lower()]()
     save_install_steps()
+    configure_editor()
     print('Installation Complete!')
     print()
     print('You can now install browser extension ' + INSTALL_URL)
@@ -252,4 +253,12 @@ def uninstall_new_reg_cur_user(reg_key):
     else:
         print('Remove Registry Key ' + reg_key)
 
+def configure_editor():
+    if not platform.system().lower() == 'windows':
+        return
+    default_data = conf.default_domain_data
+    editor = default_data['editor']
+    editor = input('Command that will be used for editing files [{}]:'.format(editor)) or editor
+    conf.default_domain_section['editor'] = editor.strip()
+    conf.save()
 

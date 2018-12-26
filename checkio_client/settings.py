@@ -19,6 +19,8 @@ class Config(configparser.ConfigParser):
     editor = 'open'
     if sys.platform.startswith('linux'):
         editor = 'xdg-open'
+    elif sys.platform.lower() == 'windows':
+        editor = 'C:\\Program Files\\Sublime Text 3\\subl.exe'
 
     domains = {
         'py': {
