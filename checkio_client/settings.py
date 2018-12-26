@@ -2,6 +2,7 @@ import sys
 import os
 import configparser
 from copy import deepcopy
+import platform
 
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
@@ -17,9 +18,9 @@ class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
     editor = 'open'
-    if sys.platform.startswith('linux'):
+    if platform.system() == 'Linux':
         editor = 'xdg-open'
-    elif sys.platform.lower() == 'windows':
+    elif platform.system() == 'Windows':
         editor = 'C:\\Program Files\\Sublime Text 3\\subl.exe'
 
     domains = {

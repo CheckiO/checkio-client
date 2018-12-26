@@ -254,7 +254,7 @@ def uninstall_new_reg_cur_user(reg_key):
         print('Remove Registry Key ' + reg_key)
 
 def configure_editor():
-    if not platform.system().lower() == 'windows':
+    if not platform.system() == 'Windows':
         return
     default_data = conf.default_domain_data
     editor = default_data['editor']
