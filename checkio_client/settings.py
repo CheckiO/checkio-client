@@ -6,7 +6,12 @@ from copy import deepcopy
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 13)
+VERSION = (0, 1, 14)
+
+TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
+
+def get_fodler(folder):
+    return os.path.expanduser(os.path.join('~', folder))
 
 class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
@@ -24,7 +29,8 @@ class Config(configparser.ConfigParser):
             'executable': sys.executable,
             'extension': 'py',
             'comment': '# ',
-            'editor': editor
+            'editor': editor,
+            'solutions': get_fodler('py_checkio_solutions')
         },
         'js': {
             'url_main': 'https://js.checkio.org',
@@ -34,7 +40,8 @@ class Config(configparser.ConfigParser):
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
-            'editor': editor
+            'editor': editor,
+            'solutions': get_fodler('js_checkio_solutions')
         }
     }
 
