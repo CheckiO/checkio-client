@@ -117,6 +117,9 @@ p_plugin.add_argument('--chromium', action='store_true',
      help='uninstall for Chromium (insted of Chrome)')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
+p_upgrade = subparsers.add_parser('upgrade', help='Upgrade CheckiO client using PIP')
+p_upgrade.set_defaults(module='system', func='upgrade')
+
 def apply_main_args(args=None):
     try:
         conf.set_default_domain(args.domain if args is not None else conf.default_domain)

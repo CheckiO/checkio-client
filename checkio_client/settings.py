@@ -6,7 +6,7 @@ from copy import deepcopy
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 14)
+VERSION = (0, 1, 15)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
