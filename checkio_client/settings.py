@@ -2,15 +2,26 @@ import sys
 import os
 import configparser
 from copy import deepcopy
+import platform
 
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 12)
+VERSION = (0, 1, 16)
+
+TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
+
+def get_fodler(folder):
+    return os.path.expanduser(os.path.join('~', folder))
 
 class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
+    editor = 'open'
+    if platform.system() == 'Linux':
+        editor = 'xdg-open'
+    elif platform.system() == 'Windows':
+        editor = 'C:\\Program Files\\Sublime Text 3\\subl.exe'
 
     domains = {
         'py': {
@@ -21,7 +32,9 @@ class Config(configparser.ConfigParser):
             'executable': sys.executable,
             'extension': 'py',
             'comment': '# ',
-            'game': 'cio'
+            'game': 'cio',
+            'editor': editor,
+            'solutions': get_fodler('py_checkio_solutions'),
         },
         'js': {
             'url_main': 'https://js.checkio.org',
@@ -31,7 +44,9 @@ class Config(configparser.ConfigParser):
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
-            'game': 'cio'
+            'game': 'cio',
+            'editor': editor,
+            'solutions': get_fodler('js_checkio_solutions'),
         },
         'epy': {
             'url_main': 'https://empireofcode.com',
@@ -41,7 +56,9 @@ class Config(configparser.ConfigParser):
             'executable': sys.executable,
             'extension': 'py',
             'comment': '# ',
-            'game': 'eoc'
+            'game': 'eoc',
+            'editor': editor,
+            'solutions': get_fodler('py_eoc_solutions'),
         },
         'ejs': {
             'url_main': 'https://empireofcode.com',
@@ -51,7 +68,9 @@ class Config(configparser.ConfigParser):
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
-            'game': 'eoc'
+            'game': 'eoc',
+            'editor': editor,
+            'solutions': get_fodler('js_eoc_solutions'),
         }
     }
 

@@ -1,4 +1,4 @@
-from checkio_client.settings import conf
+from checkio_client.settings import conf, TRANSFER_PARAMETERS
 
 def main(args):
     if not conf.has_section('Main'):
@@ -40,6 +40,11 @@ def main(args):
     domain_section = new_domain + '_checkio'
 
     conf[domain_section]['key'] = new_key
+
+    for param in TRANSFER_PARAMETERS:
+        if param in domain_data:
+            conf[domain_section][param] = domain_data[param]
+
     conf.save()
 
     print('Config file {} was updated.'.format(conf.filename))

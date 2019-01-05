@@ -96,6 +96,18 @@ class Actions:
             'do': 'syncWebContent'
         }
 
+    @staticmethod
+    def openEditor(data):
+        from subprocess import Popen
+        domain_data = conf.default_domain_data;
+
+        Popen([domain_data['editor'], data['filename']])
+
+        return {
+            'do': 'openEditor'
+        }
+
+
 
 def send_message(data):
     message = json.dumps(data).encode('utf-8')
@@ -132,8 +144,8 @@ def main():
         except Exception as e:
             send_message({
                 'do': 'error',
-                'type': 'CheckiOClientError',
-                'text': str(e)
+                'type': 'CheckiO CLient',
+                'text': e.__class__.__name__ + ': ' +str(e)
             })
         else:
             send_message(ret)
