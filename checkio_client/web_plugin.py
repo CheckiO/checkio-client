@@ -49,7 +49,8 @@ class Actions:
             return {
                 'do': 'initContent',
                 'filename': filename,
-                'content': content
+                'content': content,
+                'slug': data['slug']
             }
         else:
             filename = gen_filename(data['slug'], data['station']);
