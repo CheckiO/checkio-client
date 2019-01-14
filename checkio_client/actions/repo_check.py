@@ -8,7 +8,6 @@ import base64
 
 from checkio_client.settings import conf
 
-AUTH_KEY = conf.default_domain_data['key']
 REPO_FOLDER = None
 
 USER_CODE = None
@@ -167,6 +166,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
 def main(args):
     global REPO_FOLDER
     REPO_FOLDER = args.folder[0]
+    AUTH_KEY = conf.default_domain_data['key']
     message = '{"do": "connect", "key": "' + AUTH_KEY + '"}'
     if sys.platform == 'win32':
         signal.signal(signal.SIGINT, signal.SIG_DFL)
