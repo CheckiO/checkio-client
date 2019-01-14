@@ -1,6 +1,14 @@
 import os
 import re
 import json
+import pprint
+
+
+def format_data(obj, to_js=False):
+    data = pprint.pformat(obj, width=40)
+    if to_js:
+        return data.replace('True', 'true').replace('False', 'false').replace('None', 'Null')
+    return data
 
 def gen_args(len_args):
     return ', '.join(map(chr,range(ord('a'), ord('a') + len_args)))
@@ -19,13 +27,13 @@ if __name__ == '__main__':
     # These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
         args=gen_args(len(first_input)),
-        call=json.dumps(first_input)[1:-1]
+        call=format_data(first_input)[1:-1]
     ) + '\n'
     for test in tests['Basics']:
         ret += '    assert {funcname}({call}) == {out}\n'.format(
             funcname=funcname,
-            call=json.dumps(test['input'])[1:-1],
-            out=json.dumps(test['answer'])
+            call=format_data(test['input'])[1:-1],
+            out=format_data(test['answer'])
         )
     ret += '    print("Coding complete? Click \'Check\' to earn cool rewards!")\n'
     return ret
@@ -48,13 +56,13 @@ if (!global.is_checking) {{
     // These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
         args=gen_args(len(first_input)),
-        call=json.dumps(first_input)[1:-1]
+        call=format_data(first_input, to_js=True)[1:-1]
     ) + '\n'
     for test in tests['Basics']:
         ret += '    assert.{equal}({funcname}({call}), {out});\n'.format(
             funcname=funcname,
-            call=json.dumps(test['input'])[1:-1],
-            out=json.dumps(test['answer']),
+            call=format_data(test['input'], to_js=True)[1:-1],
+            out=format_data(test['answer'], to_js=True),
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
     ret += '''
@@ -105,33 +113,44 @@ def main(args):
     with open(referee_filename, 'w') as fh:
         fh.write(referee)
 
-    description_filename = os.path.join(folder, 'info', 'task_description.html')
-    with open(description_filename) as fh:
-        desc = fh.read()
+    descriptions = [os.path.join(folder, 'info', 'task_description.html')]
+    # import ipdb
+    # ipdb.set_trace()
+    translations = os.path.join(folder, 'translations')
+    if os.path.exists(translations):
+        for dir_name in os.listdir(translations):
+            tr_description = os.path.join(translations, dir_name, 'info', 'task_description.html')
+            if not os.path.exists(tr_description):
+                continue
+            descriptions.append(tr_description)
 
-    py_tests = ''
-    js_tests = ''
-    for test in tests['Basics'][:2]:
-        py_tests += '{funcname}({call}) == {out}\n'.format(
-            funcname=args.py_function,
-            call=json.dumps(test['input'])[1:-1],
-            out=json.dumps(test['answer'])
-        )
-        js_tests += '{funcname}({call}) == {out}\n'.format(
-            funcname=args.js_function,
-            call=json.dumps(test['input'])[1:-1],
-            out=json.dumps(test['answer'])
-        )
+    for description_filename in descriptions:
+        with open(description_filename) as fh:
+            desc = fh.read()
 
-    desc = re.sub(
-        r'\<pre\sclass\=\"brush\:\sjavascript\"\>.*?\<\/pre\>',
-        '<pre class="brush: javascript">' + js_tests + '</pre>',
-        desc, flags=re.MULTILINE | re.DOTALL)
-    desc = re.sub(
-        r'\<pre\sclass\=\"brush\:\spython\"\>.*?\<\/pre\>',
-        '<pre class="brush: python">' + py_tests + '</pre>',
-        desc, flags=re.MULTILINE | re.DOTALL)
+        py_tests = ''
+        js_tests = ''
+        for test in tests['Basics'][:2]:
+            py_tests += '{funcname}({call}) == {out}\n'.format(
+                funcname=args.py_function,
+                call=format_data(test['input'])[1:-1],
+                out=format_data(test['answer'])
+            )
+            js_tests += '{funcname}({call}) == {out}\n'.format(
+                funcname=args.js_function,
+                call=format_data(test['input'], to_js=True)[1:-1],
+                out=format_data(test['answer'], to_js=True)
+            )
 
-    with open(description_filename, 'w') as fh:
-        fh.write(desc)
+        desc = re.sub(
+            r'\<pre\sclass\=\"brush\:\sjavascript\"\>.*?\<\/pre\>',
+            '<pre class="brush: javascript">' + js_tests + '</pre>',
+            desc, flags=re.MULTILINE | re.DOTALL)
+        desc = re.sub(
+            r'\<pre\sclass\=\"brush\:\spython\"\>.*?\<\/pre\>',
+            '<pre class="brush: python">' + py_tests + '</pre>',
+            desc, flags=re.MULTILINE | re.DOTALL)
+
+        with open(description_filename, 'w') as fh:
+            fh.write(desc)
     print('Done.')
