@@ -40,6 +40,21 @@ p_repo_link.add_argument('repository', type=str, nargs=1,
 
 p_repo_link.set_defaults(module='repo', func='main_link')
 
+p_repo_convert_eoc = subparsers.add_parser('covertrepo-to-eoc', help='Conver CheckiO format missions to EoC format missions')
+p_repo_convert_eoc.add_argument('cio', type=str,
+    metavar='cio_folder',
+    help='CheckiO Mission folder')
+
+p_repo_convert_eoc.add_argument('eoc', type=str,
+    metavar='eoc_folder',
+    help='Empire of Code Mission folder')
+
+p_repo_convert_eoc.add_argument('--git-push', type=str,
+    metavar='git_push',
+    help='url to git repository you want to push EoC repo after convertion')
+
+p_repo_convert_eoc.set_defaults(module='repo_convert', func='to_eoc')
+
 
 p_repo_check = subparsers.add_parser('checkrepo', help='you can test your mission folder on remote server')
 p_repo_check.add_argument('folder', type=str, default='.', nargs=1,
@@ -61,7 +76,6 @@ p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
 p_autofill_repo.add_argument('--js-function', type=str)
 p_autofill_repo.add_argument('--py-function', type=str)
 p_autofill_repo.set_defaults(module='autofill')
-
 
 
 p_run_after = subparsers.add_parser('run', help='exec your solution')
