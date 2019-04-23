@@ -30,8 +30,8 @@ class Actions:
     def initContent(data):
         conf.set_default_domain_by_inter(data['interpreter'])
         domain_data = conf.default_domain_data;
-        if not domain_data.get('key'):
-            raise CheckiOClientConfigError('Domain is not configure. Please do $ checkio config')
+        # if not domain_data.get('key'):
+        #     raise CheckiOClientConfigError('Domain is not configure. Please do $ checkio config')
         if not domain_data.get('solutions'):
             raise CheckiOClientConfigError('Solutions are not synchronized yet. Please do $ checkio sync -h')
 
