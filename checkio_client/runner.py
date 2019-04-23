@@ -148,9 +148,9 @@ def apply_main_args(args=None):
         print(e)
         return True
 
-    if not 'key' in conf.default_domain_data and conf.exists():
-        print('Key for domain ' + conf.default_domain + ' is not defined')
-        return True
+    # if not 'key' in conf.default_domain_data and conf.exists():
+    #     print('Key for domain ' + conf.default_domain + ' is not defined')
+    #     return True
 
 def main():
     # because of calling inside of #!/usr/bin/
