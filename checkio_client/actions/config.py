@@ -30,26 +30,33 @@ def main(args):
     conf['Main']['default_domain'] = new_domain
 
     domain_data = conf.domains[new_domain]
-
-    print('What is your KEY for {} ?'.format(domain_data['url_main']))
-    print('You can find one on {}/profile/edit/'.format(domain_data['url_main']))
-    while True:
-        new_key = input('KEY:').strip()
-        if not new_key:
-            continue
-        break
-
     domain_section = new_domain + '_checkio'
 
-    conf[domain_section]['key'] = new_key
+    if domain_data['game'] != 'eoc':
+
+        print('What is your KEY for {} ?'.format(domain_data['url_main']))
+        print('You can find one on {}/profile/edit/'.format(domain_data['url_main']))
+        while True:
+            new_key = input('KEY:').strip()
+            if not new_key:
+                continue
+            break
+
+        conf[domain_section]['key'] = new_key
 
     for param in TRANSFER_PARAMETERS:
         if param in domain_data:
             conf[domain_section][param] = domain_data[param]
 
+    default_solutions = domain_data['solutions']
+    solutions_folder = input('Choose folder for your solutions [{}]'.format(default_solutions)).strip()
+    if not solutions_folder:
+        solutions_folder = default_solutions
+    conf[domain_section]['solutions'] = solutions_folder
+
+
     if domain_data['game'] == 'eoc':
-        default_source = domain_data.get('missions_source', 
-            os.path.join(domain_data['solutions'], 'source'))
+        default_source = domain_data['missions_source']
         source_folder = input('Choose folder for your source missions [{}]'.format(default_source)).strip()
         if not source_folder:
             source_folder = default_source

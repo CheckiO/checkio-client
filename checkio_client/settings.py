@@ -63,6 +63,7 @@ class Config(configparser.ConfigParser):
             'game': 'eoc',
             'editor': editor,
             'solutions': get_fodler('py_eoc_solutions'),
+            'missions_source': get_fodler('py_eoc_source'),
             'interpreter': 'python_3'
         },
         'ejs': {
@@ -76,6 +77,7 @@ class Config(configparser.ConfigParser):
             'game': 'eoc',
             'editor': editor,
             'solutions': get_fodler('js_eoc_solutions'),
+            'missions_source': get_fodler('js_eoc_source'),
             'interpreter': 'js_node'
         }
     }
