@@ -41,7 +41,7 @@ WIN_REG_KEY = r'Software\Google\Chrome\NativeMessagingHosts\com.checkio.client'
 WIN_BAT_FILE = 'chrome_plugin.bat'
 
 BAT_FILE_SCRIPT = '''@echo off
-{executable} {py_script}
+"{executable}" {py_script}
 '''
 
 INSTALL_STEPS = []
