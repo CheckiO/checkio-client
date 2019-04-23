@@ -1,3 +1,5 @@
+import os
+
 from checkio_client.settings import conf, TRANSFER_PARAMETERS
 
 def main(args):
@@ -44,6 +46,15 @@ def main(args):
     for param in TRANSFER_PARAMETERS:
         if param in domain_data:
             conf[domain_section][param] = domain_data[param]
+
+    if domain_data['game'] == 'eoc':
+        default_source = domain_data.get('missions_source', 
+            os.path.join(domain_data['solutions'], 'source'))
+        source_folder = input('Choose folder for your source missions [{}]'.format(default_source)).strip()
+        if not source_folder:
+            source_folder = default_source
+
+        conf[domain_section]['source'] = source_folder
 
     conf.save()
 

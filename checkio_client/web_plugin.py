@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-
-
-
 import sys
 import json
 import struct
@@ -60,6 +57,7 @@ class Actions:
             return {
                 'do': 'initContent',
                 'filename': filename,
+                'slug': data['slug'],
                 'isNew': True
             }
 

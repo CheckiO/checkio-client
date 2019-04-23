@@ -7,10 +7,12 @@ from checkio_client.settings import conf
 
 STR_VERSION = '.'.join(map(str, VERSION))
 
+
 def lambda_game(func_name):
     def api_call(*args, **kwargs):
         return globals()[func_name + '_' + conf.default_domain_data['game']](*args, **kwargs)
     return api_call
+    
 
 def api_request(path, data=None):
     domain_data = conf.default_domain_data

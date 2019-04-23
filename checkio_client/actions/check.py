@@ -4,8 +4,15 @@ import time
 
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
-    restore, run_solution, lambda_game
+    restore, run_solution
 from checkio_client.utils.code import code_for_check, solutions_paths
+
+
+def lambda_game(func_name):
+    def api_call(*args, **kwargs):
+        return globals()[func_name + '_' + conf.default_domain_data['game']](*args, **kwargs)
+    return api_call
+
 
 def get_filename(args):
     if args.filename:
@@ -75,7 +82,15 @@ def main_check_cio(args):
             print(block)
 
 def main_check_eoc(args):
-    pass
+    from checkio_client.eoc.testing import execute_referee
+    filename = get_filename(args)
+    mission = args.mission[0]
+
+    if args.recompile:
+        from checkio_client.eoc.getters import recompile_mission
+        recompile_mission(mission)
+
+    execute_referee('check', mission, filename)
 
 main_run = lambda_game('main_run')
 
@@ -112,4 +127,8 @@ def main_run_cio(args):
     return ret
 
 def main_run_eoc(args):
-    pass
+    from checkio_client.eoc.testing import execute_referee
+    filename = get_filename(args)
+    mission = args.mission[0]
+
+    execute_referee('run', mission, filename)

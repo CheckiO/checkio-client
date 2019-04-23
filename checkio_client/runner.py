@@ -4,6 +4,9 @@ import argparse
 from importlib import import_module
 import sys
 import shlex
+from checkio_client.eoc_runner import init_subparsers as eoc_init_subparsers,\
+    add_check_paramas
+import logging
 
 parser = argparse.ArgumentParser(prog='checkio')
 parser.add_argument('--domain', type=str, default=conf.default_domain)
@@ -40,7 +43,7 @@ p_repo_link.add_argument('repository', type=str, nargs=1,
 
 p_repo_link.set_defaults(module='repo', func='main_link')
 
-p_repo_convert_eoc = subparsers.add_parser('covertrepo-to-eoc', help='Conver CheckiO format missions to EoC format missions')
+p_repo_convert_eoc = subparsers.add_parser('convertrepo-to-eoc', help='Conver CheckiO format missions to EoC format missions')
 p_repo_convert_eoc.add_argument('cio', type=str,
     metavar='cio_folder',
     help='CheckiO Mission folder')
@@ -67,6 +70,7 @@ p_check_after.add_argument('mission', type=str, nargs=1, metavar='mission',
     help='slug for mission you want to check')
 p_check_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
+add_check_paramas(p_check_after)
 p_check_after.set_defaults(module='check')
 
 p_autofill_repo = subparsers.add_parser('autofillrepo', help='fill up animation, referee, description and initial code by basic tests and passed names for function')
@@ -85,6 +89,7 @@ p_run_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
 p_run_after.add_argument('--check', action='store_true',
      help='and do check after')
+add_check_paramas(p_run_after)
 p_run_after.set_defaults(module='check', func='main_run')
 
 
@@ -133,6 +138,8 @@ p_plugin.set_defaults(module='plugin', func='uninstall')
 
 p_upgrade = subparsers.add_parser('upgrade', help='Upgrade CheckiO client using PIP')
 p_upgrade.set_defaults(module='system', func='upgrade')
+
+eoc_init_subparsers(subparsers)
 
 def apply_main_args(args=None):
     try:

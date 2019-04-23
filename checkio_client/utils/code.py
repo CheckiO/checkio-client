@@ -133,7 +133,7 @@ def code_for_sync(code):
         return code.split(delimiter + '\n')[-1]
     else:
         if code.startswith(START_ENV_LINE):
-            return code[code.index('\n') + 1:]
+            return '\n' + code[code.index('\n') + 1:]
         else:
             return code
 

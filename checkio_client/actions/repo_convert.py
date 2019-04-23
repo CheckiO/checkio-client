@@ -30,8 +30,8 @@ def to_eoc(args):
     git_repo = args.git_push
 
     fill_file('.gitignore', '''.idea
-    __pycache__
-    *.pyc
+__pycache__
+*.pyc
     ''')
 
     fill_file('schema', 'docker-referee-python3;git@github.com:CheckiO/mission-template.git')
@@ -56,23 +56,23 @@ def to_eoc(args):
         class Covers:
             unwrap_args = '''
 
-    def cover(func, in_data):
-        return func(*in_data)
+def cover(func, in_data):
+    return func(*in_data)
 
     '''
 
             unwrap_kwargs = '''
 
-    def cover(func, in_data):
-        return func(**in_data)
+def cover(func, in_data):
+    return func(**in_data)
 
     '''
 
             js_unwrap_args = '''
 
-    function cover(func, in_data) {
-        return func.apply(this, in_data)
-    }
+function cover(func, in_data) {
+    return func.apply(this, in_data)
+}
 
     '''
 
@@ -93,28 +93,56 @@ def to_eoc(args):
 
         exec(referee_code, globs)
 
-        
+    new_cover_code = ''
+    try:
+        py_cover_code = Api.kwargs['cover_code']['python-3']
+    except KeyError:
+        pass
+    else:
+        new_cover_code += "ENV_NAME.PYTHON: '''" + py_cover_code + "'''"
 
-    fill_file('verification/src/referee.py', '''from checkio_referee import RefereeRank
+    try:
+        js_cover_code = Api.kwargs['cover_code']['js-node']
+    except KeyError:
+        pass
+    else:
+        if new_cover_code:
+            new_cover_code += ',\n            '
+        new_cover_code += "ENV_NAME.JS_NODE: '''" + js_cover_code + "'''"
+
+    new_referee_code = ('''from checkio_referee import RefereeRank, ENV_NAME
 
 
-    import settings_env
-    from tests import TESTS
+
+import settings_env
+from tests import TESTS
 
 
-    class Referee(RefereeRank):
-        TESTS = TESTS
-        ENVIRONMENTS = settings_env.ENVIRONMENTS
+class Referee(RefereeRank):
+    TESTS = TESTS
+    ENVIRONMENTS = settings_env.ENVIRONMENTS
 
-        DEFAULT_FUNCTION_NAME = "{py_func_name}"
-        FUNCTION_NAMES = {
-            "python_3": "{py_func_name}",
-            "js_node": "{js_func_name}"
-        }'''.replace('{py_func_name}', Api.kwargs['function_name']['python'])
-            .replace('{js_func_name}', Api.kwargs['function_name']['js']))
+    DEFAULT_FUNCTION_NAME = "{py_func_name}"
+    FUNCTION_NAMES = {
+        "python_3": "{py_func_name}",
+        "js_node": "{js_func_name}"
+    }
+    ENV_COVERCODE = {
+        {new_cover_code}
+    }'''.replace('{py_func_name}', Api.kwargs['function_name']['python'])
+        .replace('{js_func_name}', Api.kwargs['function_name']['js'])
+        .replace('{new_cover_code}', new_cover_code))
 
-    shutil.copytree(os.path.join(cio_folder, 'info/media'),
-        os.path.join(eoc_folder, 'media'))
+
+
+    fill_file('verification/src/referee.py', new_referee_code)
+
+    shutil.rmtree(os.path.join(eoc_folder, 'media'), ignore_errors=True)
+    try:
+        shutil.copytree(os.path.join(cio_folder, 'info/media'),
+            os.path.join(eoc_folder, 'media'))
+    except FileNotFoundError:
+        pass
 
     if git_repo:
         os.chdir(eoc_folder)

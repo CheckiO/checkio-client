@@ -3,11 +3,13 @@ import os
 import configparser
 from copy import deepcopy
 import platform
+import logging
+import socket
 
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 16)
+VERSION = (0, 1, 17)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
@@ -18,6 +20,8 @@ class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
     editor = 'open'
+    log_level = 20
+    docker_ip = '172.17.0.1'
     if platform.system() == 'Linux':
         editor = 'xdg-open'
     elif platform.system() == 'Windows':
@@ -40,7 +44,7 @@ class Config(configparser.ConfigParser):
             'url_main': 'https://js.checkio.org',
             'server_port': 2345,
             'server_host': 'py-tester.checkio.org',
-            'center_slug': 'eoc-js',
+            'center_slug': 'js',
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
@@ -59,18 +63,20 @@ class Config(configparser.ConfigParser):
             'game': 'eoc',
             'editor': editor,
             'solutions': get_fodler('py_eoc_solutions'),
+            'interpreter': 'python_3'
         },
         'ejs': {
             'url_main': 'https://empireofcode.com',
             'server_port': 2345,
             'server_host': 'api.empireofcode.com',
-            'center_slug': 'js-node',
+            'center_slug': 'eoc-js-node',
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
             'game': 'eoc',
             'editor': editor,
             'solutions': get_fodler('js_eoc_solutions'),
+            'interpreter': 'js_node'
         }
     }
 
@@ -125,6 +131,7 @@ class Config(configparser.ConfigParser):
                 continue
             for key in self[section_name]:
                 self.domains[d_key][key] = self[section_name][key]
+        logging.basicConfig(level=int(self.log_level))
 
     def reload(self):
         self.domains = deepcopy(self._initial_domains)
