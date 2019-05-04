@@ -16,13 +16,14 @@ def fill_file(name, content):
     with open(filename, 'w', encoding='utf-8') as fh:
         fh.write(content)
 
-def copy_file(from_name, to_name):
+def copy_file(from_name, to_name, convert=None):
     with open(os.path.join(cio_folder, from_name), 'r', encoding='utf-8') as fh:
-        fill_file(to_name, fh.read())
+        data = fh.read()
+        if content is not None:
+            data = content(data)
+        fill_file(to_name, data)
 
 def to_eoc(args):
-    # import ipdb
-    # ipdb.set_trace()
     global cio_folder
     global eoc_folder
     cio_folder = args.cio
@@ -36,7 +37,7 @@ __pycache__
 
     fill_file('schema', 'docker-referee-python3;git@github.com:CheckiO/mission-template.git')
 
-    copy_file('editor/animation/init.js', 'animation/init.js')
+    copy_file('editor/animation/init.js', 'animation/init.js', lambda a: a.replace('TableComponent)', 'ra)').replace('Raphael', 'ra.Raphael'))
     copy_file('editor/initial_code/js_node', 'initial/js_node')
     copy_file('editor/initial_code/python_3', 'initial/python_3')
     copy_file('info/task_description.html', 'info/description.html')
