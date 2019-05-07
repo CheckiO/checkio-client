@@ -39,17 +39,7 @@ def link_folder_to_repo(folder, repository):
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master)
 
-def main_init(args):
-    folder = args.folder[0]
-    if os.path.exists(folder):
-        print('Folder exists already')
-        return
-
-    if args.template:
-        template = args.template
-    else:
-        template = conf.repo_template
-
+def clone_repo_to_folder(template, folder):
     print('Reciving template mission from ' + template + ' ...')
     git.Repo.clone_from(template, folder)
 
@@ -57,6 +47,22 @@ def main_init(args):
         os.chmod(path, stat.S_IWRITE)
         func(path)
     shutil.rmtree(os.path.join(folder, '.git'), onerror=remove_readonly)
+
+
+def main_init(args):
+    folder = args.folder[0]
+    domain_data = conf.default_domain_data
+    if os.path.exists(folder):
+        print('Folder exists already')
+        return
+
+    if args.template:
+        template = args.template
+    else:
+        domain_data = conf.default_domain_data
+        template = domain_data['repo_template']
+
+    clone_repo_to_folder(template, folder)    
 
     if args.repository:
         print('Send to git...')

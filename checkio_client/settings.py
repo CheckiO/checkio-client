@@ -13,6 +13,9 @@ VERSION = (0, 1, 17)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
+CIO_TEMPLATE_FOLDER = 'https://github.com/CheckiO/checkio-mission-template.git'
+EOC_TEMPLATE_FOLDER = 'https://github.com/oduvan/eoc-template.git'
+
 def get_fodler(folder):
     return os.path.expanduser(os.path.join('~', folder))
 
@@ -39,6 +42,7 @@ class Config(configparser.ConfigParser):
             'game': 'cio',
             'editor': editor,
             'solutions': get_fodler('py_checkio_solutions'),
+            'repo_template': CIO_TEMPLATE_FOLDER,
         },
         'js': {
             'url_main': 'https://js.checkio.org',
@@ -51,6 +55,7 @@ class Config(configparser.ConfigParser):
             'game': 'cio',
             'editor': editor,
             'solutions': get_fodler('js_checkio_solutions'),
+            'repo_template': CIO_TEMPLATE_FOLDER,
         },
         'epy': {
             'url_main': 'https://empireofcode.com',
@@ -64,7 +69,8 @@ class Config(configparser.ConfigParser):
             'editor': editor,
             'solutions': get_fodler('py_eoc_solutions'),
             'missions_source': get_fodler('py_eoc_source'),
-            'interpreter': 'python_3'
+            'interpreter': 'python_3',
+            'repo_template': EOC_TEMPLATE_FOLDER,
         },
         'ejs': {
             'url_main': 'https://empireofcode.com',
@@ -78,7 +84,8 @@ class Config(configparser.ConfigParser):
             'editor': editor,
             'solutions': get_fodler('js_eoc_solutions'),
             'missions_source': get_fodler('js_eoc_source'),
-            'interpreter': 'js_node'
+            'interpreter': 'js_node',
+            'repo_template': EOC_TEMPLATE_FOLDER,
         }
     }
 
@@ -86,8 +93,6 @@ class Config(configparser.ConfigParser):
 
     inter_to_domain = {v['center_slug']: k for k,v in domains.items()}
     default_domain = 'py'
-
-    repo_template = 'https://github.com/CheckiO/checkio-mission-template.git'
 
     local_uch_port = 2323
 

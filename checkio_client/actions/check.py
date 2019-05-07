@@ -89,7 +89,7 @@ def main_check_eoc(args):
     if args.recompile:
         from checkio_client.eoc.getters import recompile_mission
         recompile_mission(mission)
-
+    print('Using: ' + filename)
     execute_referee('check', mission, filename)
 
 main_run = lambda_game('main_run')
@@ -131,4 +131,5 @@ def main_run_eoc(args):
     filename = get_filename(args)
     mission = args.mission[0]
 
+    print('Using: ' + filename)
     execute_referee('run', mission, filename)

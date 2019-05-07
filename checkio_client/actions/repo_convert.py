@@ -19,8 +19,8 @@ def fill_file(name, content):
 def copy_file(from_name, to_name, convert=None):
     with open(os.path.join(cio_folder, from_name), 'r', encoding='utf-8') as fh:
         data = fh.read()
-        if content is not None:
-            data = content(data)
+        if convert is not None:
+            data = convert(data)
         fill_file(to_name, data)
 
 def to_eoc(args):
