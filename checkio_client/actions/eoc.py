@@ -13,9 +13,11 @@ def get_git(args):
         rebuild_mission(args.mission)
     init_home_file(args.mission)
 
+def reset_initial(args):
+    init_home_file(args.mission)
+
 def complile_mission(args):
     recompile_mission(args.mission)
-    rebuild_native(args.mission)
 
 def build_mission(args):
     rebuild_mission(args.mission)

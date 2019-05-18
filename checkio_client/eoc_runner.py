@@ -9,7 +9,7 @@ def init_subparsers(subparsers):
                         help='start process without using container')
     get_git.set_defaults(module='eoc', func='get_git')
 
-    complile_mission = subparsers.add_parser('eoc-complile-mission', help='Collect all sources in one place')
+    complile_mission = subparsers.add_parser('eoc-compile-mission', help='Collect all sources in one place')
     complile_mission.add_argument('mission')
     complile_mission.set_defaults(module='eoc', func='complile_mission')
 
@@ -42,6 +42,12 @@ def init_subparsers(subparsers):
     p_autofill_repo.add_argument('--js-function', type=str)
     p_autofill_repo.add_argument('--py-function', type=str)
     p_autofill_repo.set_defaults(module='autofill', func='main_eoc')
+
+    p_reset_intiial = subparsers.add_parser('eoc-reset-initial', help='overwrite solution to an initial code')
+    p_reset_intiial.add_argument('mission', type=str, default='.', nargs='?',
+        metavar='mission',
+        help='name of the mission')
+    p_reset_intiial.set_defaults(module='eoc', func='reset_initial')
 
 def add_check_paramas(parser):
     parser.add_argument('--recompile', action='store_true', default=False,

@@ -9,7 +9,7 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 17)
+VERSION = (0, 1, 19)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
@@ -77,8 +77,7 @@ class Config(configparser.ConfigParser):
             'server_port': 2345,
             'server_host': 'api.empireofcode.com',
             'center_slug': 'eoc-js-node',
-            #'executable': 'node',
-            'extension': 'js',
+            'extension': 'ts',
             'comment': '// ',
             'game': 'eoc',
             'editor': editor,
