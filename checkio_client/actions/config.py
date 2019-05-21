@@ -19,7 +19,7 @@ def main(args):
     print('by default:{}'.format(conf.default_domain))
 
     while True:
-        new_domain = input('First two letters of the domain[{}]:'.format(conf.default_domain)).strip()
+        new_domain = input('Code for domain[{}]:'.format(conf.default_domain)).strip()
         if not new_domain:
             new_domain = conf.default_domain
             break
