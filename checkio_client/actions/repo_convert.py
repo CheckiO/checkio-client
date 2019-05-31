@@ -1,16 +1,18 @@
-
-
 import sys
 import os
 import shutil
 import subprocess
 
+from checkio_client.actions import gen_inits, get_tests
+
 eoc_folder = None
 cio_folder = None
 
+def get_file_name(from_name):
+    return os.path.join(eoc_folder, name)
 
 def fill_file(name, content):
-    filename = os.path.join(eoc_folder, name)
+    filename = get_file_name(name)
     dirname = os.path.dirname(filename)
     os.makedirs(dirname, exist_ok=True)
     with open(filename, 'w', encoding='utf-8') as fh:
@@ -152,3 +154,10 @@ class Referee(RefereeRank):
         subprocess.run(['git', 'commit', '-m', 'first commit'])
         subprocess.run(['git', 'remote', 'add', 'origin', git_repo])
         subprocess.run(['git', 'push', '-u', 'origin', 'master'])
+
+    gen_inits(
+        get_file_name('initial/python_3'), Api.kwargs['function_name']['python'],
+        get_file_name('initial/js_node'), Api.kwargs['function_name']['js'],
+        get_tests(get_file_name('verification/src/tests.py'))
+    )
+

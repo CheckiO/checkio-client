@@ -24,6 +24,11 @@ def mission_git_getter(url, slug):
     folder = Folder(slug)
     destination_path = folder.mission_folder()
 
+    if os.path.exists(url):
+        logging.info('Linking folder %s -> %s', url, destination_path)
+        os.symlink(os.path.abspath(url), destination_path)
+        return
+
     logging.info('Getting a new mission through the git...')
     logging.info('from %s to %s', url, destination_path)
 

@@ -40,20 +40,18 @@ if __name__ == '__main__':
 
 def gen_init_js(funcname, tests):
     first_input = tests['Basics'][0]['input']
-    ret = '''"use strict";
-
-function {funcname}({args}) {{
+    ret = '''
+export function {funcname}({args}) {{
 
     // your code here
     return undefined;
 }}
 
-var assert = require('assert');
-if (!global.is_checking) {{
-    console.log('Example:');
-    console.log({funcname}({call}));
+import * as assert from 'assert';
+console.log('Example:');
+console.log({funcname}({call}));
 
-    // These "asserts" are used for self-checking and not for an auto-testing'''.format(
+// These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
         args=gen_args(len(first_input)),
         call=format_data(first_input, to_js=True)[1:-1]
@@ -66,10 +64,25 @@ if (!global.is_checking) {{
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
     ret += '''
-    console.log("Coding complete? Click 'Check' to earn cool rewards!");
-}
+console.log("Coding complete? Click 'Check' to earn cool rewards!");
     '''
     return ret
+
+
+def gen_inits(f_init_py, name_py, f_init_js, name_js, tests):
+
+    with open(f_init_py, 'w') as fh:
+        fh.write(gen_init_py(name_py, tests))
+
+    with open(f_init_js, 'w') as fh:
+        fh.write(gen_init_js(name_js, tests))
+
+def get_tests(f_tests):
+    with open(f_tests) as fh:
+        globs = {}
+        exec(fh.read(), globs)
+        return globs['TESTS']
+
 
 
 def gen_folders(
@@ -82,18 +95,10 @@ def gen_folders(
         f_descriptions=None
         ):
     if f_tests is not None:
-        with open(f_tests) as fh:
-            globs = {}
-            exec(fh.read(), globs)
-            tests = globs['TESTS']
+        tests = get_tests(f_tests)
 
-    if f_init_py is not None:
-        with open(f_init_py, 'w') as fh:
-            fh.write(gen_init_py(name_py, tests))
-
-    if f_init_js is not None:
-        with open(f_init_js, 'w') as fh:
-            fh.write(gen_init_js(name_js, tests))
+    if f_init_py is not None and f_init_js is not None:
+        gen_inits(f_init_py, name_py, f_init_js, name_js, tests)
 
     if f_referee is not None:
         referee_filename = f_referee
