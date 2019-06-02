@@ -25,6 +25,9 @@ class Folder(object):
     def image_name(self):
         return 'checkio/' + self.u_slug
 
+    def image_name_cli(self):
+        return 'checkio/cli__' + self.u_slug
+
     def mission_folder(self):
         return os.path.join(conf.missions_folder, self.f_slug)
 

@@ -5,6 +5,7 @@ from checkio_client.eoc.initial import init_home_file
 
 from checkio_client.eoc.folder import Folder
 from checkio_client.settings import conf
+from checkio_client.eoc.testing import execute_referee
 
 def get_git(args):
     mission_git_getter(args.url, args.mission)
@@ -54,3 +55,13 @@ def init_mission(args):
     init_home_file(mission)
 
     print('Done')
+
+def battle(args):
+    from checkio_client.actions.check import get_filename
+    filename = get_filename(args)
+    mission = args.mission[0]
+
+    if args.recompile:
+        recompile_mission(mission)
+    print('Using: ' + filename)
+    execute_referee('battle', mission, filename)

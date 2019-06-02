@@ -1,8 +1,10 @@
+import tempfile
 import shutil
 import logging
 import git
 import os
 import re
+from docker.errors import BuildError
 
 from distutils.dir_util import copy_tree
 
@@ -16,6 +18,11 @@ def logging_sys(command):
     logging.debug('Sys: %s', command)
     os.system(command)
 
+def tmp_folder(folder):
+    tmp = os.path.join(tempfile.mkdtemp(), 'mnt')
+    shutil.copytree(folder, tmp)
+    return tmp
+
 def mission_git_getter(url, slug):
     # TODO: checkout into mission solder
     # compile it
@@ -24,11 +31,6 @@ def mission_git_getter(url, slug):
     folder = Folder(slug)
     destination_path = folder.mission_folder()
 
-    if os.path.exists(url):
-        logging.info('Linking folder %s -> %s', url, destination_path)
-        os.symlink(os.path.abspath(url), destination_path)
-        return
-
     logging.info('Getting a new mission through the git...')
     logging.info('from %s to %s', url, destination_path)
 
@@ -36,9 +38,19 @@ def mission_git_getter(url, slug):
         answer = input('Folder {} exists already.'
                            ' Do you want to overwite it? [y]/n :'.format(destination_path))
         if answer is '' or answer.lower().startswith('y'):
-            shutil.rmtree(destination_path)
+
+            if os.path.islink(destination_path):
+                os.remove(destination_path)
+            else:
+                shutil.rmtree(destination_path)
         else:
             return
+
+
+    if os.path.exists(url):
+        logging.info('Linking folder %s -> %s', url, destination_path)
+        os.symlink(os.path.abspath(url), destination_path)
+        return
 
     re_ret = re.search(RE_REPO_BRANCH, url)
     if re_ret:
@@ -80,7 +92,34 @@ def rebuild_mission(slug):
         shutil.rmtree(verification_folder_path)
 
     copy_tree(folder.verification_folder_path(), verification_folder_path)
-    docker.build(name_image=folder.image_name(), path=verification_folder_path)
+    try:
+        docker.build(name_image=folder.image_name(), path=verification_folder_path)
+    except BuildError as e:
+        for item in e.build_log:
+            print(item.get('stream'))
+        print(list(e.build_log))
+        print(e.msg)
+        return
+
+    rebuild_cli_interface(slug)
+
+
+def rebuild_cli_interface(slug):
+    folder = Folder(slug)
+    build_folder = folder.interface_cli_folder_path()
+    img_name = folder.image_name_cli()
+
+    logging.info("Build docker image %s from %s", img_name, build_folder)
+
+    docker = DockerClient()
+    try:
+        docker.build(name_image=img_name, path=tmp_folder(build_folder))
+    except BuildError as e:
+        for item in e.build_log:
+            print(item.get('stream'))
+        print(list(e.build_log))
+        print(e.msg)
+
 
 
 def rebuild_native(slug):

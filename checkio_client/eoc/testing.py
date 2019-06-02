@@ -4,6 +4,8 @@ import logging
 import socket
 import time
 import tempfile
+import shutil
+from datetime import datetime
 from distutils.dir_util import copy_tree
 
 from checkio_docker.client import DockerClient
@@ -12,7 +14,6 @@ from checkio_client.eoc.folder import Folder
 import docker
 
 NAME_CLI_INTERFACE = 'checkio_cli_interface'
-NAME_CLI_IMAGE = 'checkio_interface'
 NAME_CLI_NETWORK = 'checkio_cli_bridge'
 
 def wait_for_remove(func, list_kwargs=None):
@@ -30,6 +31,12 @@ def wait_for_remove(func, list_kwargs=None):
             return
 
 
+def tmp_folder(folder):
+    tmp = os.path.join(tempfile.mkdtemp(), 'mnt')
+    shutil.copytree(folder, tmp)
+    return tmp
+
+
 def cleanup_containers():
     client = docker.from_env()
 
@@ -37,6 +44,8 @@ def cleanup_containers():
         if cont.name.startswith('mission__'):
             cont.remove(force=True)
 
+    # import ipdb
+    # ipdb.set_trace()
     try:
         container = client.containers.get(NAME_CLI_INTERFACE)
     except docker.errors.NotFound:
@@ -46,23 +55,23 @@ def cleanup_containers():
         container.kill()
     except docker.errors.APIError:
         pass
-    logging.info('Wait for removing {} ...'.format(NAME_CLI_INTERFACE))
+    logging.info('Wait for killing {} ...'.format(NAME_CLI_INTERFACE))
     wait_for_remove(lambda a: a.name==NAME_CLI_INTERFACE)
+
+    try:
+        container.remove()
+    except docker.errors.APIError:
+        pass
+
+    logging.info('Wait for removing {} ...'.format(NAME_CLI_INTERFACE))
+    wait_for_remove(lambda a: a.name==NAME_CLI_INTERFACE, {
+            'all': True
+        })
+
 
 
 def prepare_docker():
     client = docker.from_env()
-    try:
-        client.images.get(NAME_CLI_IMAGE)
-    except docker.errors.ImageNotFound:
-        build_path = os.path.join(os.path.dirname(__file__), NAME_CLI_IMAGE)
-        logging.info('Build Docker Image {} from {}'.format(NAME_CLI_IMAGE, build_path))
-        (_, logs) = client.images.build(
-            path=build_path,
-            tag=NAME_CLI_IMAGE + ':latest'
-        )
-        for line in logs:
-            logging.info(line)
 
     try:
         client.networks.get(NAME_CLI_NETWORK)
@@ -88,11 +97,11 @@ def start_docker(slug):
 
     return client.run(slug, command, 
         volumes={
-            folder.compiled_referee_folder_path(): {
+            tmp_folder(folder.compiled_referee_folder_path()): {
                     'bind': '/opt/mission/src',
                     'mode': 'rw'
                 },
-            folder.compiled_envs_folder_path(): {
+            tmp_folder(folder.compiled_envs_folder_path()): {
                     'bind': '/opt/mission/envs',
                     'mode': 'rw'
                 }
@@ -107,13 +116,14 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
     env_name = conf.default_domain_data['interpreter']
     docker_filename = '/root/' + os.path.basename(path_to_code)
     client = docker.from_env()
+    folder = Folder(slug)
 
     logging.info('Interface Folder {}'.format(interface_folder))
-    return client.containers.run(NAME_CLI_IMAGE,
+    return client.containers.run(folder.image_name_cli(),
             ' '.join(('python', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
                   str(conf.console_server_port), str(conf.log_level), tmp_file_name or '-')),
             volumes={
-                interface_folder: {
+                tmp_folder(interface_folder): {
                     'bind': '/root/interface',
                     'mode': 'rw'
                 },
@@ -126,7 +136,6 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
                 (str(conf.console_server_port) + '/tcp'): conf.console_server_port
             },
             name=NAME_CLI_INTERFACE,
-            auto_remove=True,
             network_mode=NAME_CLI_NETWORK,
             stdout=True,
             detach=True,
@@ -143,7 +152,9 @@ def execute_referee(command, slug, solution, without_container=False, interface_
     def start_container():
         return start_docker(slug)
 
+    client = docker.from_env()
     folder = Folder(slug)
+
     prepare_docker()
     if interface_only:
         return start_interface()
@@ -152,10 +163,37 @@ def execute_referee(command, slug, solution, without_container=False, interface_
 
     cli_logs = start_interface()
     ref_logs = start_container()
+    cli_read_size = 0
+    ref_read_size = 0
+    while True:
+        #print('...', client.containers.get(cli_logs.id).status)
 
-    for line in cli_logs.logs(stream=True):
-        try:
-            print(line.decode('utf-8'), end="")
-        except Exception as e:
-            logging.error(e, exc_info=True)
-            pass
+        # import ipdb
+        # ipdb.set_trace()
+
+        cli_data = cli_logs.logs()[cli_read_size:]
+        cli_read_size += len(cli_data)
+
+        ref_data = ref_logs.logs()[ref_read_size:]
+        ref_read_size += len(ref_data)
+
+        if cli_data:
+            print(cli_data.decode('utf-8'))
+
+        if ref_data:
+            print(ref_data.decode('utf-8'))
+
+        if (client.containers.get(cli_logs.id).status, 
+             client.containers.get(ref_logs.id).status) == ('exited', 'exited'):
+            break
+
+        time.sleep(0.01)
+
+        
+
+    # for line in cli_logs.logs(stream=True):
+    #     try:
+    #         print(line.decode('utf-8'), end="")
+    #     except Exception as e:
+    #         logging.error(e, exc_info=True)
+    #         pass
