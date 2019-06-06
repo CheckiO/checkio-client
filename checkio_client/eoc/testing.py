@@ -120,7 +120,7 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
 
     logging.info('Interface Folder {}'.format(interface_folder))
     return client.containers.run(folder.image_name_cli(),
-            ' '.join(('python', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
+            ' '.join(('python -u', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
                   str(conf.console_server_port), str(conf.log_level), tmp_file_name or '-')),
             volumes={
                 tmp_folder(interface_folder): {
