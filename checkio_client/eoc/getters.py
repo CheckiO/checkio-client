@@ -9,6 +9,7 @@ from docker.errors import BuildError
 from distutils.dir_util import copy_tree
 
 from checkio_client.eoc.folder import Folder
+from checkio_client.eoc.testing import cleanup_containers
 from checkio_docker.parser import MissionFilesCompiler
 from checkio_docker.client import DockerClient
 
@@ -84,23 +85,27 @@ def recompile_mission(slug):
 
 
 def rebuild_mission(slug):
+    cleanup_containers()
     folder = Folder(slug)
     docker = DockerClient()
     verification_folder_path = folder.container_verification_folder_path()
-    logging.info("Build docker image %s from %s", folder.image_name(), verification_folder_path)
+    logging.info("[mission] Build docker image %s from %s", folder.image_name(), verification_folder_path)
     if os.path.exists(verification_folder_path):
         shutil.rmtree(verification_folder_path)
 
     copy_tree(folder.verification_folder_path(), verification_folder_path)
+
     try:
-        docker.build(name_image=folder.image_name(), path=verification_folder_path)
+        docker.build(
+            name_image=folder.image_name(),
+            path=verification_folder_path)
     except BuildError as e:
+        print('Build Error:')
         for item in e.build_log:
             print(item.get('stream'))
         print(list(e.build_log))
         print(e.msg)
         return
-
     rebuild_cli_interface(slug)
 
 
@@ -109,12 +114,15 @@ def rebuild_cli_interface(slug):
     build_folder = folder.interface_cli_folder_path()
     img_name = folder.image_name_cli()
 
-    logging.info("Build docker image %s from %s", img_name, build_folder)
+    logging.info("[interface] Build docker image %s from %s", img_name, build_folder)
 
     docker = DockerClient()
     try:
-        docker.build(name_image=img_name, path=tmp_folder(build_folder))
+        docker.build(
+            name_image=img_name,
+            path=tmp_folder(build_folder))
     except BuildError as e:
+        print('Build Error:')
         for item in e.build_log:
             print(item.get('stream'))
         print(list(e.build_log))

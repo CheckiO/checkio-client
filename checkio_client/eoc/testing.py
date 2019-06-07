@@ -79,7 +79,7 @@ def prepare_docker():
         logging.info('Create Network {}'.format(NAME_CLI_NETWORK))
         client.networks.create(NAME_CLI_NETWORK, driver="bridge")
 
-def start_docker(slug):
+def start_docker(slug, ref_extra_volume=None):
     command = "{} {} 1 2 {}".format(NAME_CLI_INTERFACE, conf.console_server_port, str(conf.log_level))
     client = DockerClient()
     folder = Folder(slug)
@@ -93,10 +93,7 @@ def start_docker(slug):
         for momo in files:
             os.chmod(os.path.join(root, momo), 0o777)
 
-    
-
-    return client.run(slug, command, 
-        volumes={
+    volumes={
             tmp_folder(folder.compiled_referee_folder_path()): {
                     'bind': '/opt/mission/src',
                     'mode': 'rw'
@@ -105,7 +102,13 @@ def start_docker(slug):
                     'bind': '/opt/mission/envs',
                     'mode': 'rw'
                 }
-        },
+        }
+
+    if ref_extra_volume is not None:
+        volumes.update(ref_extra_volume)
+
+    return client.run(slug, command, 
+        volumes=volumes,
         network_mode=NAME_CLI_NETWORK,
         name='mission__' + slug,
         detach=True)
@@ -144,13 +147,13 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
 
 
 def execute_referee(command, slug, solution, without_container=False, interface_child=False,
-                    referee_only=False, interface_only=False):
+                    referee_only=False, interface_only=False, ref_extra_volume=None):
     def start_interface(tmp_file_name=None):
         return start_server(slug, folder.interface_cli_folder_path(), command, solution,
                             folder.native_env_bin('python3'), tmp_file_name)
 
     def start_container():
-        return start_docker(slug)
+        return start_docker(slug, ref_extra_volume)
 
     client = docker.from_env()
     folder = Folder(slug)

@@ -54,6 +54,7 @@ def init_subparsers(subparsers):
         help='slug for mission you want to check')
     p_battle.add_argument('filename', type=str, nargs='?', metavar='filename',
         help='path to the file with solution')
+    p_battle.add_argument('--balance', type=str, default=None)
     add_check_paramas(p_battle)
     p_battle.set_defaults(module='eoc', func='battle')
 

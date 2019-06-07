@@ -7,28 +7,15 @@ from checkio_client.eoc.folder import Folder
 from checkio_client.utils.code import code_for_file
 
 
-def init_home_file(slug):
+def init_home_file(slug, force=False):
     initial_file = conf.default_domain_data['interpreter']
     folder = Folder(slug)
-    if not os.path.exists(folder.init_file_path(initial_file)):
-        raise ValueError('Wrong initial file {}'.format(initial_file))
-        # available_list = folder.init_available_list()
-        # if not available_list:
-        #     logging.warning('Do not support any language. Initials is empty.')
-        #     return
-        # default = available_list[0]
-        # str_propose = '[{}]/{}'.format(default, '/'.join(available_list[1:]))
-        # answer = input(('Mission "{}" doesn\'t support {}.' +
-        #                     ' Please choose one out of available {}:').format(slug, interpreter,
-        #                                                                       str_propose))
-        # answer = answer.strip()
-        # if not answer:
-        #     answer = default
 
-        # _, interpreter = set_mi(interpreter=answer, do_raise=False)
-        # return init_home_file(slug, interpreter)
+    solution = folder.solution_path()
+    if os.path.exists(solution) and not force:
+        return
 
-    write_solution(slug, initial_file, folder.solution_path())
+    write_solution(slug, initial_file, solution)
 
 def write_solution(slug, initial_file, solution_path):
     domain = conf.default_domain_data
