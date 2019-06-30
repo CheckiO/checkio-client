@@ -1,4 +1,5 @@
 import os
+import logging
 
 from checkio_client.eoc.getters import mission_git_getter, recompile_mission, rebuild_native,\
     rebuild_mission
@@ -64,13 +65,13 @@ def battle(args):
 
     if args.recompile:
         recompile_mission(mission)
-    print('Using: ' + filename)
+    logging.info('Using: ' + filename)
 
     ref_extra_volume = None
     if args.balance:
-        print('Balance from:' + args.balance)
+        logging.info('Balance from:' + args.balance)
         if not os.path.exists(args.balance):
-            print('Balance "' + args.balance + '" does not exists. Using was skiped')
+            logging.info('Balance "' + args.balance + '" does not exists. Using was skiped')
         else:
             ref_extra_volume = {
                 args.balance: {

@@ -44,8 +44,6 @@ def cleanup_containers():
         if cont.name.startswith('mission__'):
             cont.remove(force=True)
 
-    # import ipdb
-    # ipdb.set_trace()
     try:
         container = client.containers.get(NAME_CLI_INTERFACE)
     except docker.errors.NotFound:
@@ -170,9 +168,6 @@ def execute_referee(command, slug, solution, without_container=False, interface_
     ref_read_size = 0
     while True:
         #print('...', client.containers.get(cli_logs.id).status)
-
-        # import ipdb
-        # ipdb.set_trace()
 
         cli_data = cli_logs.logs()[cli_read_size:]
         cli_read_size += len(cli_data)

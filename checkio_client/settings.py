@@ -9,7 +9,7 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 1, 20)
+VERSION = (0, 2, 0)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
@@ -59,6 +59,7 @@ class Config(configparser.ConfigParser):
         },
         'epy': {
             'url_main': 'https://empireofcode.com',
+            'ws_url': 'wss://empireofcode.com/ws/',
             'server_port': 2325,
             'server_host': 'api.empireofcode.com',
             'center_slug': 'eoc-python',
@@ -74,6 +75,7 @@ class Config(configparser.ConfigParser):
         },
         'ejs': {
             'url_main': 'https://empireofcode.com',
+            'ws_url': 'wss://empireofcode.com/ws/',
             'server_port': 2345,
             'server_host': 'api.empireofcode.com',
             'center_slug': 'eoc-js-node',
@@ -118,6 +120,7 @@ class Config(configparser.ConfigParser):
             self.write(f)
 
     def set_default_domain(self, domain):
+
         if domain not in self.domains:
             raise ValueError('Wrong Domain')
         setattr(self, 'default_domain', domain)

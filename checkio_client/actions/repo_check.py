@@ -5,6 +5,7 @@ import os
 import sys
 import signal
 import base64
+import logging
 
 from checkio_client.settings import conf
 
@@ -80,14 +81,14 @@ async def tcp_echo_client(message, loop):
                                                    loop=loop)
     CIO_WRITER = writer
 
-    print('Send: %r' % message)
+    logging.debug('Send: %r' % message)
     writer.write(message.encode() + b'\0')
-    print('Open ' + conf_data['url_main'] + '/mission/tester/')
+    logging.debug('Open ' + conf_data['url_main'] + '/mission/tester/')
 
     while True:
         data = await reader.readuntil('\0'.encode())
         data = data.decode('utf8')[:-1]
-        print('Received: %r' % data)
+        logging.debug('Received: %r' % data)
         data = json.loads(data)
         await globals()['do_tester_' + data['do']](data, writer)
     
@@ -141,7 +142,7 @@ class EchoServerClientProtocol(asyncio.Protocol):
     def data_received(self, lines):
         for line in lines.split(b'\0')[:-1]:
             data = line.decode('utf8')
-            print('!!Data received: {!r}'.format(data))
+            logging.debug('Data received: {!r}'.format(data))
 
             data = json.loads(data)
 

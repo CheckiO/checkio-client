@@ -7,9 +7,12 @@ import shlex
 from checkio_client.eoc_runner import init_subparsers as eoc_init_subparsers,\
     add_check_paramas
 import logging
+LEVELS = [logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
 
 parser = argparse.ArgumentParser(prog='checkio')
-parser.add_argument('--domain', type=str, default=conf.default_domain)
+parser.add_argument('--domain', type=str)
+parser.add_argument('-v', dest='verbose', default=3, type=int,
+                    help='Scripts verbose level')
 subparsers = parser.add_subparsers(help='subcommands')
 
 p_config = subparsers.add_parser('config', help='configure the tool')
@@ -143,7 +146,7 @@ eoc_init_subparsers(subparsers)
 
 def apply_main_args(args=None):
     try:
-        conf.set_default_domain(args.domain if args is not None else conf.default_domain)
+        conf.set_default_domain(args.domain if args is not None and args.domain is not None else conf.default_domain)
     except ValueError as e:
         print(e)
         return True
@@ -156,6 +159,9 @@ def main():
     # because of calling inside of #!/usr/bin/
     call_args = sum(map(lambda a: shlex.split(a), sys.argv[1:]), [])
     args = parser.parse_args(call_args)
+
+    logging.basicConfig(level=LEVELS[args.verbose])
+
     try:
         module = import_module('checkio_client.actions.' + args.module)
     except AttributeError:

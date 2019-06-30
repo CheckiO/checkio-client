@@ -3,13 +3,13 @@ import os
 import shutil
 import subprocess
 
-from checkio_client.actions import gen_inits, get_tests
+from checkio_client.actions.autofill import gen_inits, get_tests, gen_cli_interface
 
 eoc_folder = None
 cio_folder = None
 
 def get_file_name(from_name):
-    return os.path.join(eoc_folder, name)
+    return os.path.join(eoc_folder, from_name)
 
 def fill_file(name, content):
     filename = get_file_name(name)
@@ -31,6 +31,7 @@ def to_eoc(args):
     cio_folder = args.cio
     eoc_folder = args.eoc
     git_repo = args.git_push
+    is_multiple = False
 
     fill_file('.gitignore', '''.idea
 __pycache__
@@ -90,12 +91,15 @@ function cover(func, in_data) {
             'TESTS': None,
             'CheckiOReferee': CheckiOReferee,
             'cover_codes': Covers,
-            'api': Api
-
+            'api': Api,
+            'unwrap_kwargs': Covers.unwrap_kwargs,
+            'unwrap_args': Covers.unwrap_args,
+            'js_unwrap_args': Covers.js_unwrap_args,
         }
 
         exec(referee_code, globs)
 
+    is_multiple = bool(len(Api.kwargs.get('cover_code', {})))
     new_cover_code = ''
     try:
         py_cover_code = Api.kwargs['cover_code']['python-3']
@@ -147,6 +151,15 @@ class Referee(RefereeRank):
     except FileNotFoundError:
         pass
 
+    gen_inits(
+        get_file_name('initial/python_3'), Api.kwargs['function_name']['python'],
+        get_file_name('initial/js_node'), Api.kwargs['function_name']['js'],
+        get_tests(get_file_name('verification/src/tests.py')),
+        is_multiple=is_multiple
+    )
+
+    gen_cli_interface(eoc_folder, Api.kwargs['function_name']['python'], Api.kwargs['function_name']['js'])
+
     if git_repo:
         os.chdir(eoc_folder)
         subprocess.run(['git', 'init'])
@@ -155,9 +168,4 @@ class Referee(RefereeRank):
         subprocess.run(['git', 'remote', 'add', 'origin', git_repo])
         subprocess.run(['git', 'push', '-u', 'origin', 'master'])
 
-    gen_inits(
-        get_file_name('initial/python_3'), Api.kwargs['function_name']['python'],
-        get_file_name('initial/js_node'), Api.kwargs['function_name']['js'],
-        get_tests(get_file_name('verification/src/tests.py'))
-    )
-
+   

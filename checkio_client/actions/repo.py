@@ -3,6 +3,7 @@ import sys
 import shutil
 import os
 import stat
+import logging
 
 from checkio_client.settings import conf
 
@@ -20,7 +21,7 @@ You can do it by doing:
 def link_folder_to_repo(folder, repository):
     folder = os.path.abspath(folder)
     repo = git.Repo.init(folder)
-    print('Add files to repo')
+    logging.info('Add files to repo')
     for root, dirs, files in os.walk(folder):
         if root.endswith('.git') or '/.git/' in root:
             continue
@@ -28,19 +29,19 @@ def link_folder_to_repo(folder, repository):
         # TODO: Skip pyc and __pycache__
 
         for file_name in files:
-            abs_file_name = os.path.join(root, file_name)
+            logging.info = os.path.join(root, file_name)
             print(abs_file_name)
             repo.index.add([abs_file_name])
 
     repo.index.commit("initial commit")
     origin = repo.create_remote('origin', repository)
-    print('Push to:' + repository)
+    logging.info('Push to:' + repository)
     origin.push(repo.refs)
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master)
 
 def clone_repo_to_folder(template, folder):
-    print('Reciving template mission from ' + template + ' ...')
+    logging.info('Reciving template mission from ' + template + ' ...')
     git.Repo.clone_from(template, folder)
 
     def remove_readonly(func, path, execinfo):
@@ -53,7 +54,7 @@ def main_init(args):
     folder = args.folder[0]
     domain_data = conf.default_domain_data
     if os.path.exists(folder):
-        print('Folder exists already')
+        logging.info('Folder exists already')
         return
 
     if args.template:
@@ -65,7 +66,7 @@ def main_init(args):
     clone_repo_to_folder(template, folder)    
 
     if args.repository:
-        print('Send to git...')
+        logging.info('Send to git...')
         link_folder_to_repo(folder, args.repository)
     print('Done')
 

@@ -4,6 +4,7 @@ import os
 import sys
 import stat
 import json
+import logging
 
 from checkio_client.settings import conf
 
@@ -178,7 +179,7 @@ def install_x(folder, win_bat=None):
     conf_filename = os.path.join(folder, FILENAME)
     script_filename = os.path.join(conf.foldername, EXEC_SCRIPT_NAME)
 
-    print('Init Script File ' + script_filename)
+    logging.info('Init Script File ' + script_filename)
     os.makedirs(os.path.dirname(script_filename), exist_ok=True)
     with open(script_filename, 'w') as fh:
         fh.write(EXEC_SCRIPT.replace('EXEC', sys.executable))
@@ -187,7 +188,7 @@ def install_x(folder, win_bat=None):
     st = os.stat(script_filename)
     os.chmod(script_filename, st.st_mode | stat.S_IEXEC)
 
-    print('Init Config File ' + conf_filename)
+    logging.info('Init Config File ' + conf_filename)
     os.makedirs(os.path.dirname(conf_filename), exist_ok=True)
     with open(conf_filename, 'w') as fh:
         fh.write(CONFIG_X.replace('HOST', win_bat or script_filename))
@@ -201,7 +202,7 @@ def install_windows():
     (conf_filename, script_filename) = install_x(FOLDER_WINDOW, WIN_BAT_FILE)
 
     bat_file = os.path.join(FOLDER_WINDOW, WIN_BAT_FILE)
-    print('Init Bat File ' + bat_file)
+    logging.info('Init Bat File ' + bat_file)
 
     with open(bat_file, 'w') as fh:
         fh.write(BAT_FILE_SCRIPT.format(
@@ -210,7 +211,7 @@ def install_windows():
         ))
     add_install_step(INS_NEW_FILE, bat_file)
 
-    print('Init Registry Key')
+    logging.info('Init Registry Key')
 
     import winreg
     reg_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, WIN_REG_KEY)
@@ -240,18 +241,18 @@ def uninstall_new_file(filename):
     try:
         os.remove(filename)
     except Exception as e:
-        print('Unable to remove file {}: {}'.format(filename, e))
+        logging.info('Unable to remove file {}: {}'.format(filename, e))
     else:
-        print('Remove file ' + filename)
+        logging.info('Remove file ' + filename)
 
 def uninstall_new_reg_cur_user(reg_key):
     import winreg
     try:
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, reg_key)
     except Exception as e:
-        print('Unable to remove Registry Key {}: {}'.format(reg_key, e))
+        logging.info('Unable to remove Registry Key {}: {}'.format(reg_key, e))
     else:
-        print('Remove Registry Key ' + reg_key)
+        logging.info('Remove Registry Key ' + reg_key)
 
 def configure_editor():
     if not platform.system() == 'Windows':

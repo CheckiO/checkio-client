@@ -3,6 +3,8 @@ import re
 import json
 import pprint
 
+from checkio_client.settings import conf
+
 
 def format_data(obj, to_js=False):
     data = pprint.pformat(obj, width=40)
@@ -13,7 +15,7 @@ def format_data(obj, to_js=False):
 def gen_args(len_args):
     return ', '.join(map(chr,range(ord('a'), ord('a') + len_args)))
 
-def gen_init_py(funcname, tests):
+def gen_init_py(funcname, tests, is_multiple=True):
     first_input = tests['Basics'][0]['input']
     ret = '''def {funcname}({args}):
     # your code here
@@ -26,19 +28,52 @@ if __name__ == '__main__':
 
     # These "asserts" are used for self-checking and not for an auto-testing'''.format(
         funcname=funcname,
-        args=gen_args(len(first_input)),
-        call=format_data(first_input)[1:-1]
+        args=gen_args(is_multiple and len(first_input) or 1),
+        call=is_multiple and format_data(first_input)[1:-1] or format_data(first_input)
     ) + '\n'
     for test in tests['Basics']:
         ret += '    assert {funcname}({call}) == {out}\n'.format(
             funcname=funcname,
-            call=format_data(test['input'])[1:-1],
+            call=is_multiple and format_data(test['input'])[1:-1] or format_data(test['input']),
             out=format_data(test['answer'])
         )
     ret += '    print("Coding complete? Click \'Check\' to earn cool rewards!")\n'
     return ret
 
-def gen_init_js(funcname, tests):
+def gen_init_js(funcname, tests, is_multiple=True):
+    first_input = tests['Basics'][0]['input']
+    ret = '''"use strict";
+
+function {funcname}({args}) {{
+    // your code here
+    return undefined;
+}}
+
+var assert = require('assert');
+
+if (!global.is_checking) {{
+    console.log('Example:');
+    console.log({funcname}({call}));
+
+    // These "asserts" are used for self-checking'''.format(
+        funcname=funcname,
+        args=gen_args(is_multiple and len(first_input) or 1),
+        call=is_multiple and format_data(first_input, to_js=True)[1:-1] or format_data(first_input, to_js=True)
+    ) + '\n'
+    for test in tests['Basics']:
+        ret += '    assert.{equal}({funcname}({call}), {out});\n'.format(
+            funcname=funcname,
+            call=is_multiple and format_data(test['input'], to_js=True)[1:-1] or format_data(test['input'], to_js=True),
+            out=format_data(test['answer'], to_js=True),
+            equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
+        )
+    ret += '''
+    console.log("Coding complete? Click 'Check' to earn cool rewards!");
+}
+    '''
+    return ret
+
+def gen_init_ts(funcname, tests, is_multiple=True):
     first_input = tests['Basics'][0]['input']
     ret = '''
 export function {funcname}({args}) {{
@@ -51,15 +86,15 @@ import * as assert from 'assert';
 console.log('Example:');
 console.log({funcname}({call}));
 
-// These "asserts" are used for self-checking and not for an auto-testing'''.format(
+// These "asserts" are used for self-checking'''.format(
         funcname=funcname,
-        args=gen_args(len(first_input)),
-        call=format_data(first_input, to_js=True)[1:-1]
+        args=gen_args(is_multiple and len(first_input) or 1),
+        call=is_multiple and format_data(first_input, to_js=True)[1:-1] or format_data(first_input, to_js=True)
     ) + '\n'
     for test in tests['Basics']:
-        ret += '    assert.{equal}({funcname}({call}), {out});\n'.format(
+        ret += 'assert.{equal}({funcname}({call}), {out});\n'.format(
             funcname=funcname,
-            call=format_data(test['input'], to_js=True)[1:-1],
+            call=is_multiple and format_data(test['input'], to_js=True)[1:-1] or format_data(test['input'], to_js=True),
             out=format_data(test['answer'], to_js=True),
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
@@ -69,13 +104,17 @@ console.log("Coding complete? Click 'Check' to earn cool rewards!");
     return ret
 
 
-def gen_inits(f_init_py, name_py, f_init_js, name_js, tests):
+def gen_inits(f_init_py, name_py, f_init_js, name_js, tests, is_multiple=True):
 
     with open(f_init_py, 'w') as fh:
-        fh.write(gen_init_py(name_py, tests))
+        fh.write(gen_init_py(name_py, tests, is_multiple=is_multiple))
 
     with open(f_init_js, 'w') as fh:
-        fh.write(gen_init_js(name_js, tests))
+        domain_data = conf.default_domain_data
+        if domain_data['game'] == 'cio':
+            fh.write(gen_init_js(name_js, tests, is_multiple=is_multiple))
+        else:
+            fh.write(gen_init_ts(name_js, tests, is_multiple=is_multiple))
 
 def get_tests(f_tests):
     with open(f_tests) as fh:
@@ -188,12 +227,35 @@ def main(args):
     
     print('Done.')
 
+
+def gen_cli_interface(folder, py_function, js_function):
+    cli_interface_folder = os.path.join(folder, 'interfaces', 'checkio_cli', 'src')
+    cli_interface_file = os.path.join(cli_interface_folder, 'interface.py')
+    interface_content = '''
+from handlers.simple_output import SimplePrintHandler
+from server import TCPConsoleServer
+
+
+class ServerController(TCPConsoleServer):
+    cls_handler = SimplePrintHandler
+
+    FUNCTION_NAMES = {{
+        "python_3": "{py_function}",
+        "js_node": "{js_function}"
+    }}
+    '''.format(py_function=py_function, js_function=js_function)
+
+    os.makedirs(cli_interface_folder, exist_ok=True)
+    with open(cli_interface_file, 'w') as fh:
+        fh.write(interface_content)
+
+
 def main_eoc(args):
     from checkio_client.eoc.folder import Folder
     from checkio_client.eoc.initial import init_home_file
-    
-    mission = args.mission
-    folder = Folder(mission).mission_folder()
+
+    folder = args.mission
+    #folder = Folder(mission).mission_folder()
     descriptions = [os.path.join(folder, 'info', 'description.html')]
     translations = os.path.join(folder, 'translations')
     if os.path.exists(translations):
@@ -227,6 +289,7 @@ def main_eoc(args):
     with open(referee_filename, 'w') as fh:
         fh.write(referee)
 
-    init_home_file(mission)
+    gen_cli_interface(folder, args.py_function, args.js_function)
+
     
     print('Done.')

@@ -1,10 +1,28 @@
 import os
 import time
 
-from checkio_client.api import get_user_missions, save_code
+from checkio_client.api import get_user_missions, save_code, get_user_single_mission
 from checkio_client.utils.code import code_for_file, init_code_file, code_for_send,\
                             solutions_paths, gen_filename
 from checkio_client.settings import conf
+
+def sync_single_mission(mission):
+    domain_data = conf.default_domain_data
+    item = get_user_single_mission(mission)
+    if item is None:
+        return
+    mission = item['slug']
+    code = item['code']
+    description = item['description']
+    folder = domain_data.get('solutions')
+
+    output = code_for_file(mission, code, description)
+
+    filename = gen_filename(mission, item['stationName'], folder)
+    init_code_file(filename, output)
+    return filename
+
+
 
 def main(args):
     folder = args.folder

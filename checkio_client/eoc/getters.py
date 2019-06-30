@@ -70,7 +70,7 @@ def mission_git_getter(url, slug):
         'type': 'git',
         'url': url
     })
-    print('Prepare mission {} from {}'.format(slug, url))
+    logging.info('Prepare mission {} from {}'.format(slug, url))
 
 
 def recompile_mission(slug):
@@ -100,11 +100,11 @@ def rebuild_mission(slug):
             name_image=folder.image_name(),
             path=verification_folder_path)
     except BuildError as e:
-        print('Build Error:')
+        logging.warning('Build Error:')
         for item in e.build_log:
-            print(item.get('stream'))
-        print(list(e.build_log))
-        print(e.msg)
+            logging.warning(item.get('stream'))
+        logging.warning(list(e.build_log))
+        logging.warning(e.msg)
         return
     rebuild_cli_interface(slug)
 
@@ -122,11 +122,11 @@ def rebuild_cli_interface(slug):
             name_image=img_name,
             path=tmp_folder(build_folder))
     except BuildError as e:
-        print('Build Error:')
+        logging.warning('Build Error:')
         for item in e.build_log:
-            print(item.get('stream'))
-        print(list(e.build_log))
-        print(e.msg)
+            logging.warning(item.get('stream'))
+        logging.warning(list(e.build_log))
+        logging.warning(e.msg)
 
 
 

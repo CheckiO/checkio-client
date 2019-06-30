@@ -80,13 +80,13 @@ def code_for_file(slug, code, html_description=None):
         description = escape_description(html_description)
         comment = conf.default_domain_data['comment']
         description = comment + ('\n' + comment).join(description.split('\n'))
-        mission_link = (
-            comment + conf.default_domain_data['url_main'] + 
-            '/mission/' + slug + '/'
-        )
+        # mission_link = (
+        #     comment + conf.default_domain_data['url_main'] + 
+        #     '/mission/' + slug + '/'
+        # )
 
         code = (
-            mission_link + '\n\n' +
+            # mission_link + '\n\n' +
             description + '\n' +
             get_end_desc_line() + '\n\n' +
             code.strip()

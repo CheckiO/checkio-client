@@ -2,6 +2,7 @@
 import sys
 import json
 import struct
+import logging
 
 from checkio_client.runner import apply_main_args
 from checkio_client.settings import conf, Config
@@ -9,6 +10,7 @@ from checkio_client.utils.code import solutions_paths, code_for_sync,\
                                     get_end_desc_line, gen_filename,\
                                     init_code_file, gen_env_line
 
+logging.disable()
 
 class CheckiOClientError(Exception):
     def __init__(self, text):
