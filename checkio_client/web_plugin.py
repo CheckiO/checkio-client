@@ -2,7 +2,7 @@
 import sys
 import json
 import struct
-import logging
+#import logging
 
 from checkio_client.runner import apply_main_args
 from checkio_client.settings import conf, Config
@@ -10,7 +10,21 @@ from checkio_client.utils.code import solutions_paths, code_for_sync,\
                                     get_end_desc_line, gen_filename,\
                                     init_code_file, gen_env_line
 
-logging.disable()
+# logger = logging.getLogger()
+
+# # logging.basicConfig(
+# #     level=logging.DEBUG,
+# #     filename='~/.checkio/extension.log'
+# #     )
+# # logging.basicConfig(filename='~/.checkio/extension.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+# file_logger = logging.FileHandler('extension.log')
+# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# file_logger.setLevel(logging.DEBUG)
+# file_logger.setFormatter(formatter)
+# logger.addHandler(file_logger)
+
+# #logging.basicConfig(level=logging.DEBUG, handlers=[file_logger])
+# logger.info('WOW')
 
 class CheckiOClientError(Exception):
     def __init__(self, text):

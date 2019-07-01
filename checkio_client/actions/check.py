@@ -110,6 +110,9 @@ async def eoc_websocket_check(args):
 
 
     domain_data = conf.default_domain_data
+    if 'key' not in domain_data:
+        print('client is not configured. Please do $ checkio config')
+        return
 
     logging.info('USING: %s', filename)
 
@@ -225,6 +228,9 @@ async def eoc_websocket_run(args):
             return
 
     domain_data = conf.default_domain_data
+    if 'key' not in domain_data:
+        print('client is not configured. Please do $ checkio config')
+        return
 
     logging.info('USING:' + filename)
 

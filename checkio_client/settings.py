@@ -3,7 +3,6 @@ import os
 import configparser
 from copy import deepcopy
 import platform
-import logging
 import socket
 
 __all__ = ['conf']
@@ -23,7 +22,6 @@ class Config(configparser.ConfigParser):
     foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
     editor = 'open'
-    log_level = 20
     docker_ip = '172.17.0.1'
     if platform.system() == 'Linux':
         editor = 'xdg-open'
@@ -140,7 +138,6 @@ class Config(configparser.ConfigParser):
                 continue
             for key in self[section_name]:
                 self.domains[d_key][key] = self[section_name][key]
-        logging.basicConfig(level=int(self.log_level))
 
     def reload(self):
         self.domains = deepcopy(self._initial_domains)
