@@ -22,8 +22,8 @@ api_request = lambda_game('api_request')
 def api_request_cio(path, data=None):
     domain_data = conf.default_domain_data
 
-    logging.debug('REQ', domain_data['url_main'] + path)
-    logging.debug('DATA', data)
+    logging.debug('REQ: ' + domain_data['url_main'] + path)
+    logging.debug('DATA: ' + str(data))
 
     if data and isinstance(data, dict):
         data = urllib.parse.urlencode(data).encode('utf-8')
@@ -39,7 +39,7 @@ def api_request_cio(path, data=None):
         else:
             raise
     resp_text = res.read().decode('utf-8')
-    logging.debug('RESP', resp_text)
+    logging.debug('RESP: ' + resp_text)
     return json.loads(resp_text)
 
 def api_request_eoc(path, data=None):
@@ -51,8 +51,8 @@ def api_request_eoc(path, data=None):
     data.update({
         'api_key': domain_data['key']
     })
-    logging.debug('REQ', domain_data['url_main'] + path)
-    logging.debug('DATA', data)
+    logging.debug('REQ: ' + domain_data['url_main'] + path)
+    logging.debug('DATA: ' + str(data))
 
     request_data = json.dumps(data)
 
@@ -60,7 +60,7 @@ def api_request_eoc(path, data=None):
         domain_data['url_main'] + path,
         request_data, headers={'content-type': 'application/json'})
 
-    logging.debug('RESP', response.text)
+    logging.debug('RESP: ' + response.text)
     return json.loads(response.text)
 
 

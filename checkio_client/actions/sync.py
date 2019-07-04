@@ -9,7 +9,7 @@ from checkio_client.settings import conf
 def sync_single_mission(mission):
     domain_data = conf.default_domain_data
     item = get_user_single_mission(mission)
-    if item is None:
+    if item is None or item['stationName'] is None:
         return
     mission = item['slug']
     code = item['code']

@@ -122,6 +122,33 @@ class Actions:
             'do': 'openEditor'
         }
 
+    @staticmethod
+    def listFolder(data):
+        conf.set_default_domain_by_inter(data['interpreter'])
+        domain_data = conf.default_domain_data;
+        folder = os.path.join(domain_data['solutions'], data['folder'])
+        if not os.path.exists(folder):
+            return {
+                'do': 'listFolder',
+                'files': []
+            }
+
+        files = []
+        for filename in sorted(os.listdir(folder)):
+            if not filename.endswith('.' + domain_data['extension']):
+                continue
+
+            files.append({
+                    'name': filename
+                })
+
+        return {
+            'do': 'listFolder',
+            'files': files
+        }
+
+
+
 
 
 def send_message(data):
