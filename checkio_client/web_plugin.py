@@ -2,6 +2,7 @@
 import sys
 import json
 import struct
+import time
 #import logging
 
 from checkio_client.runner import apply_main_args
@@ -123,13 +124,14 @@ class Actions:
         }
 
     @staticmethod
-    def listFolder(data):
+    def listFolderStrategies(data):
         conf.set_default_domain_by_inter(data['interpreter'])
         domain_data = conf.default_domain_data;
-        folder = os.path.join(domain_data['solutions'], data['folder'])
+        folder = os.path.join(domain_data['solutions'], 'strategies')
         if not os.path.exists(folder):
+            os.makedirs(folder)
             return {
-                'do': 'listFolder',
+                'do': 'listFolderStrategies',
                 'files': []
             }
 
@@ -137,14 +139,47 @@ class Actions:
         for filename in sorted(os.listdir(folder)):
             if not filename.endswith('.' + domain_data['extension']):
                 continue
+            # if not os.path.isfile(filename):
+            #     continue
+
+
+            abs_filename = os.path.join(folder, filename)
+
+            f_stats = os.stat(abs_filename)
+            t_changed = time.time() - f_stats.st_mtime
+
+            with open(abs_filename) as fh:
+                content = fh.read()
 
             files.append({
-                    'name': filename
+                    'name': filename,
+                    'filename': abs_filename,
+                    'changed': int(t_changed),
+                    'content': content,
                 })
 
         return {
-            'do': 'listFolder',
+            'do': 'listFolderStrategies',
             'files': files
+        }
+
+    @staticmethod
+    def saveStrategyFile(data):
+        conf.set_default_domain_by_inter(data['interpreter'])
+        domain_data = conf.default_domain_data;
+        folder = os.path.join(domain_data['solutions'], 'strategies')
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        name = data['name']
+        filename = os.path.join(folder, name)
+        with open(filename, 'w') as fh:
+            fh.write(data['content'])
+
+        return {
+            'do': 'saveStrategyFile',
+            'name': name,
+            'filename': filename,
         }
 
 
