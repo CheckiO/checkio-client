@@ -119,6 +119,7 @@ def save_strategy_file(name, content):
     logging.info('Receive File: %s', name)
     domain_data = conf.default_domain_data
     folder = os.path.join(domain_data['solutions'], 'strategies')
+    logging.info('Receive File: %s', os.path.join(folder, name))
     with open(os.path.join(folder, name), 'w') as fh:
         fh.write(content)
 
@@ -193,3 +194,32 @@ def eoc_strategies(args):
             }
 
     asyncio.get_event_loop().run_until_complete(eoc_websocket_sync_strategy(remote_data, local_data))
+
+
+async def eoc_websocket_rm_strategy(name):
+    import websockets
+
+    domain_data = conf.default_domain_data
+
+    async with websockets.connect(
+            domain_data['ws_url'], extra_headers=websockets.http.Headers({
+                'Cookie': 'apiKey=' + domain_data['key']
+                })) as websocket:
+        greeting = await websocket.recv()
+
+        logging.info('Remove Remote: %s', name)
+        await websocket.send(json.dumps({
+            'action': 'delete-strategy-file',
+            'data': {
+                'strategies': [name]
+            }}))
+
+    folder = os.path.join(domain_data['solutions'], 'strategies')
+    filename = os.path.join(folder, name)
+    if os.path.exists(filename):
+        logging.info('Remove Local: %s', filename)
+        os.remove(filename)
+
+
+def eoc_rm_strategy(args):
+    asyncio.get_event_loop().run_until_complete(eoc_websocket_rm_strategy(args.name))
