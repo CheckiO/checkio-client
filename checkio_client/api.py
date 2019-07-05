@@ -63,7 +63,18 @@ def api_request_eoc(path, data=None):
     logging.debug('RESP: ' + response.text)
     return json.loads(response.text)
 
+def api_request_get(path):
+    domain_data = conf.default_domain_data
+    logging.debug('REQ GET: ' + domain_data['url_main'] + path)
 
+    response = requests.get(
+        domain_data['url_main'] + path, headers={'content-type': 'application/json'})
+
+    logging.debug('RESP: ' + response.text)
+    return json.loads(response.text)
+
+def get_server_time():
+    return int(api_request_get('/api/time/')['time'])
 
 def get_mission_info(mission_slug):
     return api_request('/api/tasks/' + mission_slug + '/')

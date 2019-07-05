@@ -4,6 +4,7 @@ import time
 import asyncio
 from random import randint
 import logging
+import json
 
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
@@ -98,7 +99,6 @@ def main_check_eoc_local(args):
 
 async def eoc_websocket_check(args):
     import websockets
-    import json
 
     mission = args.mission[0]
     filename = get_filename(args)

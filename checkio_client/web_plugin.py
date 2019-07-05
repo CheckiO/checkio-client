@@ -3,6 +3,7 @@ import sys
 import json
 import struct
 import time
+import asyncio
 #import logging
 
 from checkio_client.runner import apply_main_args
@@ -139,9 +140,11 @@ class Actions:
         for filename in sorted(os.listdir(folder)):
             if not filename.endswith('.' + domain_data['extension']):
                 continue
-            # if not os.path.isfile(filename):
-            #     continue
 
+            abs_filename = os.path.join(folder, filename)
+
+            if not os.path.isfile(abs_filename):
+                continue
 
             abs_filename = os.path.join(folder, filename)
 

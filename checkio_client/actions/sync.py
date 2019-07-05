@@ -1,7 +1,11 @@
 import os
 import time
+import json
+import asyncio
+import logging
 
-from checkio_client.api import get_user_missions, save_code, get_user_single_mission
+from checkio_client.api import get_user_missions, save_code, get_user_single_mission,\
+                                api_request, api_request_get, get_server_time
 from checkio_client.utils.code import code_for_file, init_code_file, code_for_send,\
                             solutions_paths, gen_filename
 from checkio_client.settings import conf
@@ -97,4 +101,95 @@ def main(args):
         conf.default_domain_section['solutions'] = os.path.abspath(folder)
         conf.save()
 
+async def send_strategy_file(websocket, name, content):
+    logging.info('Send File: %s', name)
+    server_time = get_server_time()
+    await websocket.send(json.dumps({
+        'action': 'save-strategy-file',
+        'data': {
+            'strategies': {
+                name: {
+                    'at': server_time,
+                    'content': content
+                }
+            }
+        }}))
 
+def save_strategy_file(name, content):
+    logging.info('Receive File: %s', name)
+    domain_data = conf.default_domain_data
+    folder = os.path.join(domain_data['solutions'], 'strategies')
+    with open(os.path.join(folder, name), 'w') as fh:
+        fh.write(content)
+
+async def eoc_websocket_sync_strategy(remote_data, local_data):
+    import websockets
+
+    domain_data = conf.default_domain_data
+
+    async with websockets.connect(
+            domain_data['ws_url'], extra_headers=websockets.http.Headers({
+                'Cookie': 'apiKey=' + domain_data['key']
+                })) as websocket:
+        greeting = await websocket.recv()
+
+        for name, data in local_data.items():
+            if name not in remote_data:
+                await send_strategy_file(websocket, name, data['content'])
+                continue
+
+            r_data = remote_data.pop(name)
+
+            if r_data['content'] == data['content']:
+                continue
+
+            if r_data['changed'] > data['changed']:
+                await send_strategy_file(websocket, name, data['content'])
+                continue
+
+            save_strategy_file(name, r_data['content'])
+
+        for name, r_data in remote_data.items():
+            save_strategy_file(name, r_data['content'])
+
+    print('DONE')
+
+
+def eoc_strategies(args):
+    domain_data = conf.default_domain_data
+    
+    remote_data = api_request('/api/console/private/')['strategies']
+    server_time = get_server_time()
+
+    for name in remote_data.keys():
+        remote_data[name]['changed'] = server_time - remote_data[name]['at']
+
+    folder = os.path.join(domain_data['solutions'], 'strategies')
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    local_data = {}
+
+    for filename in sorted(os.listdir(folder)):
+            if not filename.endswith('.' + domain_data['extension']):
+                continue
+            abs_filename = os.path.join(folder, filename)
+
+            if not os.path.isfile(abs_filename):
+                continue
+
+
+            
+
+            f_stats = os.stat(abs_filename)
+            t_changed = time.time() - f_stats.st_mtime
+
+            with open(abs_filename) as fh:
+                content = fh.read()
+
+            local_data[filename] = {
+                'changed': int(t_changed),
+                'content': content,
+            }
+
+    asyncio.get_event_loop().run_until_complete(eoc_websocket_sync_strategy(remote_data, local_data))

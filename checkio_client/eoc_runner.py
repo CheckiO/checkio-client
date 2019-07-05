@@ -58,6 +58,9 @@ def init_subparsers(subparsers):
     add_check_paramas(p_battle)
     p_battle.set_defaults(module='eoc', func='battle')
 
+    p_sync_strategies = subparsers.add_parser('eoc-sync-strategies', help='Sync Strategies for EoC')
+    p_sync_strategies.set_defaults(module='sync', func='eoc_strategies')
+
 def add_check_paramas(parser):
     parser.add_argument('--recompile', action='store_true', default=False,
                         help='(EoC only, for --local only) Recompile mission first')
