@@ -143,8 +143,8 @@ class Actions:
 
             abs_filename = os.path.join(folder, filename)
 
-            if not os.path.isfile(abs_filename):
-                continue
+            # if not os.path.isfile(abs_filename):
+            #     continue
 
             abs_filename = os.path.join(folder, filename)
 
@@ -184,6 +184,20 @@ class Actions:
             'name': name,
             'filename': filename,
         }
+
+    @staticmethod
+    def deleteStrategyFile(data):
+        conf.set_default_domain_by_inter(data['interpreter'])
+        domain_data = conf.default_domain_data;
+        folder = os.path.join(domain_data['solutions'], 'strategies')
+        filename = os.path.join(folder, data['name'])
+        if os.path.exists(filename):
+            os.remove(filename)
+
+        return {
+            'do': 'deleteStrategyFile'
+        }
+
 
 
 
