@@ -127,16 +127,20 @@ p_sync.set_defaults(module='sync')
 
 p_plugin = subparsers.add_parser('install-plugin', help='Install Web Plugin')
 p_plugin.add_argument('--ff', action='store_true',
-     help='install for FireFox (insted of Chrome)')
+     help='install for FireFox')
 p_plugin.add_argument('--chromium', action='store_true',
-     help='install for Chromium (insted of Chrome)')
+     help='install for Chromium')
+p_plugin.add_argument('--chrome', action='store_true',
+     help='install for Chrome')
 p_plugin.set_defaults(module='plugin', func='install')
 
 p_plugin = subparsers.add_parser('uninstall-plugin', help='Unstall Web Plugin')
 p_plugin.add_argument('--ff', action='store_true',
-     help='uninstall for FireFox (insted of Chrome)')
+     help='uninstall for FireFox')
 p_plugin.add_argument('--chromium', action='store_true',
-     help='uninstall for Chromium (insted of Chrome)')
+     help='uninstall for Chromium')
+p_plugin.add_argument('--chrome', action='store_true',
+     help='uninstall for Chrome')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
 p_upgrade = subparsers.add_parser('upgrade', help='Upgrade CheckiO client using PIP')
