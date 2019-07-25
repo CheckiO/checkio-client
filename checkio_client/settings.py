@@ -19,7 +19,11 @@ def get_fodler(folder):
     return os.path.expanduser(os.path.join('~', folder))
 
 class Config(configparser.ConfigParser):
-    foldername = os.path.join(os.path.expanduser("~"), '.checkio')
+    xdg = os.getenv('XDG_CONFIG_HOME')
+    if xdg:
+        foldername = os.path.join(xdg, 'checkio')
+    else:
+        foldername = os.path.join(os.path.expanduser("~"), '.checkio')
     filename = os.path.join(foldername, 'config.ini')
     editor = 'open'
     docker_ip = '172.17.0.1'
