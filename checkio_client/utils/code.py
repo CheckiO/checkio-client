@@ -97,7 +97,8 @@ def code_for_file(slug, code, html_description=None):
 
 def init_code_file(filename, code):
     folder = os.path.dirname(filename)
-    os.makedirs(folder, exist_ok=True)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
     with open(filename, 'w', encoding='utf-8') as fh: #TODO: if file exists
         fh.write(code)
 
