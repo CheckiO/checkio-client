@@ -166,6 +166,9 @@ def main():
 
     logging.basicConfig(level=LEVELS[args.verbose])
 
+    # because I don't knoe how to get log_level from logging
+    logging.log_level = LEVELS[args.verbose]
+
     try:
         module = import_module('checkio_client.actions.' + args.module)
     except AttributeError:

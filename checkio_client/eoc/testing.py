@@ -120,10 +120,7 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
     folder = Folder(slug)
 
     logging.info('Interface Folder {}'.format(interface_folder))
-    return client.containers.run(folder.image_name_cli(),
-            ' '.join(('python -u', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
-                  str(conf.console_server_port), str(conf.log_level), tmp_file_name or '-')),
-            volumes={
+    volumes={
                 tmp_folder(interface_folder): {
                     'bind': '/root/interface',
                     'mode': 'rw'
@@ -132,7 +129,19 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
                     'bind': docker_filename,
                     'mode': 'rw'
                 }
-            },
+            }
+
+    if conf.tmp_folder:
+        volumes[conf.tmp_folder] = {
+            'bind': '/root/tmp',
+            'mode': 'rw'
+        }
+        
+
+    return client.containers.run(folder.image_name_cli(),
+            ' '.join(('python -u', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
+                  str(conf.console_server_port), str(conf.log_level), tmp_file_name or '-')),
+            volumes=volumes,
             ports={
                 (str(conf.console_server_port) + '/tcp'): conf.console_server_port
             },

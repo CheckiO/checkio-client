@@ -70,6 +70,8 @@ def add_check_paramas(parser):
                         help='(EoC only, for --local only) Recompile mission first')
     parser.add_argument('--local', action='store_true', default=False,
                         help='(EoC only) Use local container')
+    parser.add_argument('--eoc-referee',  type=str, default=None,
+                        help='(EoC only) Path to referee source')
 
 
 

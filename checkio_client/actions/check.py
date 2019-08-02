@@ -5,6 +5,7 @@ import asyncio
 from random import randint
 import logging
 import json
+import os
 
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
@@ -21,7 +22,10 @@ def lambda_game(func_name):
 
 def get_filename(args):
     if args.filename:
-        return args.filename
+        filename = args.filename
+        filename = os.path.expanduser(filename)
+        filename = os.path.abspath(filename)
+        return filename
     default_data = conf.default_domain_data
     if 'solutions' not in default_data:
         raise ValueError('Solutions folder is not defined')
@@ -95,7 +99,7 @@ def main_check_eoc_local(args):
         from checkio_client.eoc.getters import recompile_mission
         recompile_mission(mission)
     logging.info('Using: ' + filename)
-    execute_referee('check', mission, filename)
+    execute_referee('check', mission, filename, ref_extra_volume=eoc_get_extra_volume(args))
 
 async def eoc_websocket_check(args):
     import websockets
@@ -206,6 +210,16 @@ def main_run_cio(args):
     print()
     return ret
 
+def eoc_get_extra_volume(args):
+    if args.eoc_referee:
+        return {
+            args.eoc_referee: {
+                'bind': '/src/checkio-referee/checkio_referee',
+                'mode': 'rw'
+            }
+        }
+    else:
+        return {}
 
 def main_run_eoc_local(args):
     from checkio_client.eoc.testing import execute_referee
@@ -213,7 +227,9 @@ def main_run_eoc_local(args):
     mission = args.mission[0]
 
     logging.info('Using: ' + filename)
-    execute_referee('run', mission, filename)
+    
+
+    execute_referee('run', mission, filename, ref_extra_volume=eoc_get_extra_volume(args))
 
 async def eoc_websocket_run(args):
     import websockets
