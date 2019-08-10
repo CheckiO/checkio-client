@@ -1,5 +1,6 @@
 import os
 import logging
+import asyncio
 
 from checkio_client.eoc.getters import mission_git_getter, recompile_mission, rebuild_native,\
     rebuild_mission
@@ -58,6 +59,22 @@ def init_mission(args):
 
     print('Done')
 
+def send_battle_to_server(battle_json):
+    import websockets
+
+    domain_data = conf.default_domain_data
+    async def send_to_websocket():
+        async with websockets.connect(
+            domain_data['ws_url'], extra_headers=websockets.http.Headers({
+                'Cookie': 'apiKey=' + domain_data['key']
+                })) as websocket:
+
+            greeting = await websocket.recv()
+
+            await websocket.send('{"action": "attack-save", "data": {"battle": ' + battle_json + '}}')
+
+    asyncio.get_event_loop().run_until_complete(send_to_websocket())
+
 def battle(args):
     from checkio_client.actions.check import get_filename
     filename = get_filename(args)
@@ -80,4 +97,6 @@ def battle(args):
                 }
             }
 
-    execute_referee('battle', mission, filename, ref_extra_volume=ref_extra_volume)
+    battle_json = execute_referee('battle', mission, filename, ref_extra_volume=ref_extra_volume)
+
+    send_battle_to_server(battle_json)

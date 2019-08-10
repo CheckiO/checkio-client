@@ -23,7 +23,7 @@ class Config(configparser.ConfigParser):
     filename = os.path.join(foldername, 'config.ini')
     editor = 'open'
     docker_ip = '172.17.0.1'
-    log_level = 0
+    log_level = 20
     tmp_folder = None
     if platform.system() == 'Linux':
         editor = 'xdg-open'

@@ -175,6 +175,11 @@ def execute_referee(command, slug, solution, without_container=False, interface_
     ref_logs = start_container()
     cli_read_size = 0
     ref_read_size = 0
+    system_data = ''
+    is_system_collecting = False
+    SYSTEM_START = '---SYSTEM---'
+    SYSTEM_END = '---END-SYSTEM---'
+
     while True:
         #print('...', client.containers.get(cli_logs.id).status)
 
@@ -185,7 +190,23 @@ def execute_referee(command, slug, solution, without_container=False, interface_
         ref_read_size += len(ref_data)
 
         if cli_data:
-            print(cli_data.decode('utf-8'))
+            cli_data = cli_data.decode('utf-8')
+
+            if not is_system_collecting and SYSTEM_START in cli_data:
+                cli_data, new_system_data = cli_data.split(SYSTEM_START)
+                system_data += new_system_data
+                is_system_collecting = True
+
+            if is_system_collecting and SYSTEM_END in cli_data:
+                new_system_data, cli_data = cli_data.split(SYSTEM_END)
+                system_data += new_system_data
+                is_system_collecting = False
+
+            if is_system_collecting:
+                system_data += cli_data
+                cli_data = ''
+
+            print(cli_data)
 
         if ref_data:
             print(ref_data.decode('utf-8'))
@@ -195,6 +216,8 @@ def execute_referee(command, slug, solution, without_container=False, interface_
             break
 
         time.sleep(0.01)
+
+    return system_data
 
         
 
