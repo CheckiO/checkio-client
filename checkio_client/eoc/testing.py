@@ -198,22 +198,30 @@ def execute_referee(command, slug, solution, without_container=False, interface_
 
         if cli_data:
             cli_data = cli_data.decode('utf-8')
+            was_splited = False
 
             if not is_system_collecting and SYSTEM_START in cli_data:
                 cli_data, new_system_data = cli_data.split(SYSTEM_START)
                 system_data += new_system_data
                 is_system_collecting = True
+                was_splited = True
 
             if is_system_collecting and SYSTEM_END in cli_data:
                 new_system_data, cli_data = cli_data.split(SYSTEM_END)
                 system_data += new_system_data
                 is_system_collecting = False
+                was_splited = True
 
-            if is_system_collecting:
+            if is_system_collecting and not was_splited:
                 system_data += cli_data
                 cli_data = ''
 
+            
+
+            #print ('-'* 5 , 'CLI')
             print(cli_data)
+            #print('-'*5, 'SYS')
+
 
         if ref_data:
             print(ref_data.decode('utf-8'))
