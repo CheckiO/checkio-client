@@ -114,7 +114,9 @@ def start_docker(slug, ref_extra_volume=None):
 
 def start_server(slug, interface_folder, action, path_to_code, python3,
                  tmp_file_name=None):
-    env_name = conf.default_domain_data['interpreter']
+    domain_data = conf.default_domain_data
+    env_name = domain_data['interpreter']
+
     docker_filename = '/root/' + os.path.basename(path_to_code)
     client = docker.from_env()
     folder = Folder(slug)
@@ -136,7 +138,12 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
             'bind': '/root/tmp',
             'mode': 'rw'
         }
-        
+    
+    if 'solutions' in domain_data:
+        volumes[domain_data['solutions']] = {
+            'bind': '/root/solutions',
+            'mode': 'rw'
+        }
 
     return client.containers.run(folder.image_name_cli(),
             ' '.join(('python -u', '/root/interface/src/main.py', slug, action, env_name, docker_filename,
