@@ -109,7 +109,8 @@ def start_docker(slug, ref_extra_volume=None):
         volumes=volumes,
         network_mode=NAME_CLI_NETWORK,
         name='mission__' + slug,
-        detach=True)
+        detach=True,
+        ports={'4444/tcp': 4444})
 
 
 def start_server(slug, interface_folder, action, path_to_code, python3,
