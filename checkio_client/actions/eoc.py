@@ -1,6 +1,8 @@
 import os
 import logging
 import asyncio
+import json
+from pprint import pprint
 
 from checkio_client.eoc.getters import mission_git_getter, recompile_mission, rebuild_native,\
     rebuild_mission
@@ -70,6 +72,17 @@ def send_battle_to_server(battle_json):
                 })) as websocket:
 
             greeting = await websocket.recv()
+
+            data = json.loads(battle_json)
+            print('RESULT')
+            try:
+                pprint(data['result'])
+            except json.decoder.JSONDecodeError as e:
+                print('PARSE ERROR', '-'*10)
+                print(e)
+                print('-'*20)
+                print(battle_json)
+                print('-'*20)
 
             await websocket.send('{"action": "attack-save", "data": {"battle": ' + battle_json + ', "attacker": "a-test", "defender": "d-test"}}')
 
