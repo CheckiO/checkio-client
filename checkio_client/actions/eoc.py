@@ -83,8 +83,8 @@ def send_battle_to_server(battle_json):
                 print('-'*20)
                 print(battle_json)
                 print('-'*20)
-
-            await websocket.send('{"action": "attack-save", "data": {"battle": ' + battle_json + ', "attacker": "a-test", "defender": "d-test"}}')
+            else:
+                await websocket.send('{"action": "attack-save", "data": {"battle": ' + battle_json + ', "attacker": "a-test", "defender": "d-test"}}')
 
     asyncio.get_event_loop().run_until_complete(send_to_websocket())
 
