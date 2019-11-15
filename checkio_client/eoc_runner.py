@@ -55,6 +55,7 @@ def init_subparsers(subparsers):
     p_battle.add_argument('filename', type=str, nargs='?', metavar='filename',
         help='path to the file with solution')
     p_battle.add_argument('--balance', type=str, default=None)
+    p_battle.add_argument('--output-file', type=str, default=None)
     add_check_paramas(p_battle)
     p_battle.set_defaults(module='eoc', func='battle')
 

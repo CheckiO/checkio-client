@@ -73,9 +73,9 @@ def send_battle_to_server(battle_json):
 
             greeting = await websocket.recv()
 
-            data = json.loads(battle_json)
             print('RESULT')
             try:
+                data = json.loads(battle_json)
                 pprint(data['result'])
             except json.decoder.JSONDecodeError as e:
                 print('PARSE ERROR', '-'*10)
@@ -112,4 +112,8 @@ def battle(args):
 
     battle_json = execute_referee('battle', mission, filename, ref_extra_volume=ref_extra_volume)
 
-    send_battle_to_server(battle_json)
+    if args.output_file:
+        with open(args.output_file, 'w') as fh:
+            fh.write(battle_json)
+    else:
+        send_battle_to_server(battle_json)
