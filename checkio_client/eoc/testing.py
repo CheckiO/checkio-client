@@ -114,7 +114,7 @@ def start_docker(slug, ref_extra_volume=None):
 
 
 def start_server(slug, interface_folder, action, path_to_code, python3,
-                 tmp_file_name=None):
+                 tmp_file_name=None, ref_extra_volume=None):
     domain_data = conf.default_domain_data
     env_name = domain_data['interpreter']
 
@@ -133,6 +133,9 @@ def start_server(slug, interface_folder, action, path_to_code, python3,
                     'mode': 'rw'
                 }
             }
+
+    if ref_extra_volume is not None:
+        volumes.update(ref_extra_volume)
 
     if conf.tmp_folder:
         volumes[conf.tmp_folder] = {
@@ -165,7 +168,7 @@ def execute_referee(command, slug, solution, without_container=False, interface_
                     referee_only=False, interface_only=False, ref_extra_volume=None):
     def start_interface(tmp_file_name=None):
         return start_server(slug, folder.interface_cli_folder_path(), command, solution,
-                            folder.native_env_bin('python3'), tmp_file_name)
+                            folder.native_env_bin('python3'), tmp_file_name, ref_extra_volume)
 
     def start_container():
         return start_docker(slug, ref_extra_volume)
@@ -203,9 +206,18 @@ def execute_referee(command, slug, solution, without_container=False, interface_
 
             if not is_system_collecting and SYSTEM_START in cli_data:
                 cli_data, new_system_data = cli_data.split(SYSTEM_START)
+
+                if SYSTEM_END in new_system_data:
+                    new_system_data, end_cli_data = new_system_data.split(SYSTEM_END)
+                    cli_data += end_cli_data
+                    is_system_collecting = False
+                else:
+                    is_system_collecting = True
+
+
                 system_data += new_system_data
-                is_system_collecting = True
                 was_splited = True
+
 
             if is_system_collecting and SYSTEM_END in cli_data:
                 new_system_data, cli_data = cli_data.split(SYSTEM_END)
