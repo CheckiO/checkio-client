@@ -5,7 +5,7 @@ import json
 from pprint import pprint
 
 from checkio_client.eoc.getters import mission_git_getter, recompile_mission, rebuild_native,\
-    rebuild_mission
+    rebuild_mission, can_check_mission
 from checkio_client.eoc.initial import init_home_file
 
 from checkio_client.eoc.folder import Folder
@@ -91,7 +91,17 @@ def send_battle_to_server(battle_json):
 def battle(args):
     from checkio_client.actions.check import get_filename
     filename = get_filename(args)
-    mission = args.mission[0]
+    mission = args.mission
+
+    force_build = args.force_build
+
+    if not force_build:
+        force_build = not can_check_mission(mission)
+
+    if force_build:
+        mission_git_getter(args.repo, args.mission)
+        recompile_mission(args.mission)
+        rebuild_mission(args.mission)
 
     if args.recompile:
         recompile_mission(mission)

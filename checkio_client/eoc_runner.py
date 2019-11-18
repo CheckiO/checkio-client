@@ -50,11 +50,12 @@ def init_subparsers(subparsers):
     p_reset_intiial.set_defaults(module='eoc', func='reset_initial')
 
     p_battle = subparsers.add_parser('eoc-battle', help='test your battle solution')
-    p_battle.add_argument('mission', type=str, nargs=1, metavar='mission',
-        help='slug for mission you want to check')
     p_battle.add_argument('filename', type=str, nargs='?', metavar='filename',
         help='path to the file with solution')
     p_battle.add_argument('--balance', type=str, default=None)
+    p_battle.add_argument('--mission', type=str, default='battle')
+    p_battle.add_argument('--repo', type=str, default='https://github.com/checkio/eoc-battle')
+    p_battle.add_argument('--force-build', default=False, action='store_true')
     p_battle.add_argument('--output-file', type=str, default=None)
     add_check_paramas(p_battle)
     p_battle.set_defaults(module='eoc', func='battle')

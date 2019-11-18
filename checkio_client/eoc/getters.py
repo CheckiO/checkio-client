@@ -4,7 +4,7 @@ import logging
 import git
 import os
 import re
-from docker.errors import BuildError
+from docker.errors import BuildError, ImageNotFound
 
 from distutils.dir_util import copy_tree
 
@@ -23,6 +23,20 @@ def tmp_folder(folder):
     tmp = os.path.join(tempfile.mkdtemp(), 'mnt')
     shutil.copytree(folder, tmp)
     return tmp
+
+
+def can_check_mission(slug):
+    folder = Folder(slug)
+    docker = DockerClient()
+
+    try:
+        docker.images.get(folder.image_name())
+        docker.images.get(folder.image_name_cli())
+    except ImageNotFound:
+        return False
+    else:
+        return True
+
 
 def mission_git_getter(url, slug):
     # TODO: checkout into mission solder
