@@ -6,6 +6,7 @@ import sys
 import signal
 import base64
 import logging
+import warnings
 
 from checkio_client.settings import conf
 

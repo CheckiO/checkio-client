@@ -131,7 +131,8 @@ def gen_folders(
         f_init_js=None,
         f_referee=None,
         f_animation=None,
-        f_descriptions=None
+        f_descriptions=None,
+        desc_tests=2,
         ):
     if f_tests is not None:
         tests = get_tests(f_tests)
@@ -177,7 +178,7 @@ def gen_folders(
 
         py_tests = ''
         js_tests = ''
-        for test in tests['Basics'][:2]:
+        for test in tests['Basics'][:desc_tests]:
             py_tests += '{funcname}({call}) == {out}\n'.format(
                 funcname=name_py,
                 call=format_data(test['input'])[1:-1],
@@ -222,7 +223,8 @@ def main(args):
             f_init_js=os.path.join(folder, 'editor', 'initial_code', 'js_node'),
             f_referee=os.path.join(folder, 'verification', 'referee.py'),
             f_animation=os.path.join(folder, 'editor', 'animation', 'init.js'),
-            f_descriptions=descriptions
+            f_descriptions=descriptions,
+            desc_tests=args.desc_tests,
         )
     
     print('Done.')
@@ -271,7 +273,8 @@ def main_eoc(args):
             f_init_py=os.path.join(folder, 'initial', 'python_3'),
             f_init_js=os.path.join(folder, 'initial', 'js_node'),
             f_animation=os.path.join(folder, 'animation', 'init.js'),
-            f_descriptions=descriptions
+            f_descriptions=descriptions,
+            desc_tests=args.desc_tests,
         )
 
     referee_filename = os.path.join(folder, 'verification', 'src', 'referee.py')

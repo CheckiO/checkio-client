@@ -29,8 +29,8 @@ def link_folder_to_repo(folder, repository):
         # TODO: Skip pyc and __pycache__
 
         for file_name in files:
-            logging.info = os.path.join(root, file_name)
-            print(abs_file_name)
+            abs_file_name = os.path.join(root, file_name)
+            logging.info(abs_file_name)
             repo.index.add([abs_file_name])
 
     repo.index.commit("initial commit")
