@@ -19,6 +19,22 @@ p_config = subparsers.add_parser('config', help='configure the tool')
 p_config.add_argument('--key', type=str)
 p_config.set_defaults(module='config', config_not_required=True)
 
+p_config_subparsers = p_config.add_subparsers(help='config subcommands')
+
+p_config_show = p_config_subparsers.add_parser('show', help='show full config')
+p_config_show.add_argument('--raw', action='store_true',
+     help='show config.ini')
+p_config_show.set_defaults(module='config', func='main_show')
+
+p_config_set = p_config_subparsers.add_parser('set', help='set value for config')
+p_config_set.add_argument('name', type=str)
+p_config_set.add_argument('value', type=str)
+p_config_set.set_defaults(module='config', func='main_set')
+
+p_config_set = p_config_subparsers.add_parser('reset', help='reset name to default value (by removing key from config file)')
+p_config_set.add_argument('name', type=str)
+p_config_set.set_defaults(module='config', func='main_reset')
+
 #sub_creation = parser.add_subparsers(title='Mission Creation')
 
 p_repo_init = subparsers.add_parser('initrepo', help='creates a folder with an empty mission')
@@ -82,7 +98,7 @@ p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
     help='path to the repository folder')
 p_autofill_repo.add_argument('--js-function', type=str)
 p_autofill_repo.add_argument('--py-function', type=str)
-p_autofill_repo.add_argument('--desc-tests', type=int, default=2)
+p_autofill_repo.add_argument('--desc-tests', type=int, default=5)
 p_autofill_repo.set_defaults(module='autofill')
 
 

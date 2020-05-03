@@ -42,34 +42,30 @@ if __name__ == '__main__':
 
 def gen_init_js(funcname, tests, is_multiple=True):
     first_input = tests['Basics'][0]['input']
-    ret = '''"use strict";
+    ret = '''import assert from "assert";
 
 function {funcname}({args}) {{
     // your code here
     return undefined;
 }}
 
-var assert = require('assert');
+console.log('Example:');
+console.log({funcname}({call}));
 
-if (!global.is_checking) {{
-    console.log('Example:');
-    console.log({funcname}({call}));
-
-    // These "asserts" are used for self-checking'''.format(
+// These "asserts" are used for self-checking'''.format(
         funcname=funcname,
         args=gen_args(is_multiple and len(first_input) or 1),
         call=is_multiple and format_data(first_input, to_js=True)[1:-1] or format_data(first_input, to_js=True)
     ) + '\n'
     for test in tests['Basics']:
-        ret += '    assert.{equal}({funcname}({call}), {out});\n'.format(
+        ret += 'assert.{equal}({funcname}({call}), {out});\n'.format(
             funcname=funcname,
             call=is_multiple and format_data(test['input'], to_js=True)[1:-1] or format_data(test['input'], to_js=True),
             out=format_data(test['answer'], to_js=True),
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
     ret += '''
-    console.log("Coding complete? Click 'Check' to earn cool rewards!");
-}
+console.log("Coding complete? Click 'Check' to earn cool rewards!");
     '''
     return ret
 
@@ -99,22 +95,23 @@ console.log({funcname}({call}));
             equal=('deepEqual' if isinstance(test['answer'],dict) or isinstance(test['answer'], list) else 'equal')
         )
     ret += '''
-console.log("Coding complete? Click 'Check' to earn cool rewards!");
-    '''
+console.log("Coding complete? Click 'Check' to earn cool rewards!");'''
     return ret
 
 
 def gen_inits(f_init_py, name_py, f_init_js, name_js, tests, is_multiple=True):
 
-    with open(f_init_py, 'w') as fh:
-        fh.write(gen_init_py(name_py, tests, is_multiple=is_multiple))
+    if name_py:
+        with open(f_init_py, 'w') as fh:
+            fh.write(gen_init_py(name_py, tests, is_multiple=is_multiple))
 
-    with open(f_init_js, 'w') as fh:
-        domain_data = conf.default_domain_data
-        if domain_data['game'] == 'cio':
-            fh.write(gen_init_js(name_js, tests, is_multiple=is_multiple))
-        else:
-            fh.write(gen_init_ts(name_js, tests, is_multiple=is_multiple))
+    if name_js:
+        with open(f_init_js, 'w') as fh:
+            domain_data = conf.default_domain_data
+            if domain_data['game'] == 'cio':
+                fh.write(gen_init_js(name_js, tests, is_multiple=is_multiple))
+            else:
+                fh.write(gen_init_ts(name_js, tests, is_multiple=is_multiple))
 
 def get_tests(f_tests):
     with open(f_tests) as fh:
@@ -144,14 +141,16 @@ def gen_folders(
         referee_filename = f_referee
         with open(referee_filename) as fh:
             referee = fh.read()
-            referee = re.sub(
-                r'\"python\"\:\s*\"[^\"]+\"',
-                r'"python": "{}"'.format(name_py),
-                referee, flags=re.MULTILINE)
-            referee = re.sub(
-                r'\"js\"\:\s*\"[^\"]+\"',
-                r'"js": "{}"'.format(name_js),
-                referee, flags=re.MULTILINE)
+            if name_py:
+                referee = re.sub(
+                    r'\"python\"\:\s*\"[^\"]+\"',
+                    r'"python": "{}"'.format(name_py),
+                    referee, flags=re.MULTILINE)
+            if name_js:
+                referee = re.sub(
+                    r'\"js\"\:\s*\"[^\"]+\"',
+                    r'"js": "{}"'.format(name_js),
+                    referee, flags=re.MULTILINE)
 
         with open(referee_filename, 'w') as fh:
             fh.write(referee)
@@ -160,14 +159,16 @@ def gen_folders(
         referee_filename = f_animation
         with open(referee_filename) as fh:
             referee = fh.read()
-            referee = re.sub(
-                r"python\:\s*\'[^\']+\'",
-                r"python: '{}'".format(name_py),
-                referee, flags=re.MULTILINE)
-            referee = re.sub(
-                r"js\:\s*\'[^\']+\'",
-                r"js: '{}'".format(name_js),
-                referee, flags=re.MULTILINE)
+            if name_py:
+                referee = re.sub(
+                    r"python\:\s*\'[^\']+\'",
+                    r"python: '{}'".format(name_py),
+                    referee, flags=re.MULTILINE)
+            if name_js:
+                referee = re.sub(
+                    r"js\:\s*\'[^\']+\'",
+                    r"js: '{}'".format(name_js),
+                    referee, flags=re.MULTILINE)
 
         with open(referee_filename, 'w') as fh:
             fh.write(referee)
@@ -179,25 +180,29 @@ def gen_folders(
         py_tests = ''
         js_tests = ''
         for test in tests['Basics'][:desc_tests]:
-            py_tests += '{funcname}({call}) == {out}\n'.format(
-                funcname=name_py,
-                call=format_data(test['input'])[1:-1],
-                out=format_data(test['answer'])
-            )
-            js_tests += '{funcname}({call}) == {out}\n'.format(
-                funcname=name_js,
-                call=format_data(test['input'], to_js=True)[1:-1],
-                out=format_data(test['answer'], to_js=True)
-            )
+            if name_py:
+                py_tests += '{funcname}({call}) == {out}\n'.format(
+                    funcname=name_py,
+                    call=format_data(test['input'])[1:-1],
+                    out=format_data(test['answer'])
+                )
+            if name_js:
+                js_tests += '{funcname}({call}) == {out}\n'.format(
+                    funcname=name_js,
+                    call=format_data(test['input'], to_js=True)[1:-1],
+                    out=format_data(test['answer'], to_js=True)
+                )
 
-        desc = re.sub(
-            r'\<pre\sclass\=\"brush\:\sjavascript\"\>.*?\<\/pre\>',
-            '<pre class="brush: javascript">' + js_tests + '</pre>',
-            desc, flags=re.MULTILINE | re.DOTALL)
-        desc = re.sub(
-            r'\<pre\sclass\=\"brush\:\spython\"\>.*?\<\/pre\>',
-            '<pre class="brush: python">' + py_tests + '</pre>',
-            desc, flags=re.MULTILINE | re.DOTALL)
+        if name_js:
+            desc = re.sub(
+                r'\<pre\sclass\=\"brush\:\sjavascript\"\>.*?\<\/pre\>',
+                '<pre class="brush: javascript">' + js_tests + '</pre>',
+                desc, flags=re.MULTILINE | re.DOTALL)
+        if name_py:
+            desc = re.sub(
+                r'\<pre\sclass\=\"brush\:\spython\"\>.*?\<\/pre\>',
+                '<pre class="brush: python">' + py_tests + '</pre>',
+                desc, flags=re.MULTILINE | re.DOTALL)
 
         with open(description_filename, 'w') as fh:
             fh.write(desc)

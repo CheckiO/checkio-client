@@ -120,7 +120,6 @@ class Config(configparser.ConfigParser):
             self.write(f)
 
     def set_default_domain(self, domain):
-
         if domain not in self.domains:
             raise ValueError('Wrong Domain')
         setattr(self, 'default_domain', domain)

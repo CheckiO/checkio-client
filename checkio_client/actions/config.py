@@ -1,6 +1,9 @@
 import os
+from pprint import pprint
 
 from checkio_client.settings import conf, TRANSFER_PARAMETERS
+from checkio_client.runner import apply_main_args
+
 
 def main(args):
     if not conf.has_section('Main'):
@@ -83,3 +86,33 @@ def main(args):
 
     print('Config file {} was updated.'.format(conf.filename))
     print('Thank you')
+
+
+def main_show(args):
+    apply_main_args(args)
+
+    if args.raw:
+        with open(conf.filename) as f:
+            print('FILENAME: {}\n'.format(conf.filename))
+            print(f.read())
+            return
+
+    section = conf.default_domain_section
+    for name, value in conf.default_domain_data.items():
+        print('{:<20}{:<8}{}'.format(name, 'conf' if name in section else '', value))
+
+
+def main_set(args):
+    apply_main_args(args)
+    conf.default_domain_section[args.name] = args.value
+    conf.save()
+    print('Conf for domain {} was updated'.format(conf.default_domain))
+    print('Value for key {} was changed to "{}"'.format(args.name, args.value))
+
+
+def main_reset(args):
+    apply_main_args(args)
+    del conf.default_domain_section[args.name]
+    conf.save()
+    print('Conf for domain {} was updated'.format(conf.default_domain))
+    print('Value for key {} was removed'.format(args.name))
