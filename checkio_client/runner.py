@@ -102,6 +102,10 @@ p_autofill_repo.add_argument('--desc-tests', type=int, default=5)
 p_autofill_repo.add_argument('--not-multy', action='store_true')
 p_autofill_repo.set_defaults(module='autofill')
 
+p_open = subparsers.add_parser('open', help='open editor for solving puzzles')
+p_open.add_argument('mission', type=str, nargs='?', metavar='mission',
+    help='slug for mission you want to open')
+p_open.set_defaults(module='open')
 
 p_run_after = subparsers.add_parser('run', help='exec your solution')
 p_run_after.add_argument('mission', type=str, nargs=1, metavar='mission',

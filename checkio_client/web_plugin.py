@@ -47,7 +47,7 @@ class Actions:
     @staticmethod
     def initContent(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
         # if not domain_data.get('key'):
         #     raise CheckiOClientConfigError('Domain is not configure. Please do $ checkio config')
         if not domain_data.get('solutions'):
@@ -68,7 +68,7 @@ class Actions:
                 'slug': data['slug']
             }
         else:
-            filename = gen_filename(data['slug'], data['station']);
+            filename = gen_filename(data['slug'], data['station'])
             init_code_file(filename, 
                 gen_env_line(data['slug']) + '\n' + data['content'])
 
@@ -82,7 +82,7 @@ class Actions:
     @staticmethod
     def syncLocalContent(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
 
         with open(data['filename'], 'r', encoding='utf-8') as fh:
             content = code_for_sync(fh.read())
@@ -95,7 +95,7 @@ class Actions:
     @staticmethod
     def syncWebContent(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
         delimiter = get_end_desc_line() + '\n'
 
         with open(data['filename'], 'r', encoding='utf-8') as fh:
@@ -103,7 +103,7 @@ class Actions:
             if delimiter in content:
                 description = content.split(delimiter)[0] + delimiter
             else:
-                description = gen_env_line(data['slug']) + '\n';
+                description = gen_env_line(data['slug']) + '\n'
 
 
         with open(data['filename'], 'w', encoding='utf-8') as fh:
@@ -116,7 +116,7 @@ class Actions:
     @staticmethod
     def openEditor(data):
         from subprocess import Popen
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
 
         Popen([domain_data['editor'], data['filename']])
 
@@ -127,7 +127,7 @@ class Actions:
     @staticmethod
     def listFolderStrategies(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
         folder = os.path.join(domain_data['solutions'], 'strategies')
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -169,7 +169,7 @@ class Actions:
     @staticmethod
     def saveStrategyFile(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
         folder = os.path.join(domain_data['solutions'], 'strategies')
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -188,7 +188,7 @@ class Actions:
     @staticmethod
     def deleteStrategyFile(data):
         conf.set_default_domain_by_inter(data['interpreter'])
-        domain_data = conf.default_domain_data;
+        domain_data = conf.default_domain_data
         folder = os.path.join(domain_data['solutions'], 'strategies')
         filename = os.path.join(folder, data['name'])
         if os.path.exists(filename):
@@ -219,7 +219,7 @@ def read_next_message():
     text = sys.stdin.buffer.read(text_length).decode('utf-8')
     data = json.loads(text)
 
-    conf.reload();
+    conf.reload()
 
     return getattr(Actions, data['do'])(data)
 

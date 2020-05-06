@@ -12,6 +12,7 @@ from checkio_client.api import get_mission_info, check_solution,\
     restore, run_solution
 from checkio_client.utils.code import code_for_check, solutions_paths
 from checkio_client.actions.sync import sync_single_mission
+from checkio_client.actions.init import main as main_init
 
 
 def lambda_game(func_name):
@@ -21,7 +22,7 @@ def lambda_game(func_name):
 
 
 def get_filename(args):
-    if args.filename:
+    if hasattr(args, 'filename') and args.filename:
         filename = args.filename
         filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
@@ -35,6 +36,17 @@ def get_filename(args):
         return solutions_paths()[mission]
     except KeyError:
         return None
+
+def get_filename_init(args):
+    filename = get_filename(args)
+    if filename:
+        return filename
+
+        
+    setattr(args, 'out', False)
+    setattr(args, 'without_info', False)
+    main_init(args)
+    return get_filename(args)
 
 main = lambda_game('main_check')
 
@@ -180,15 +192,7 @@ def main_run_cio(args):
 
     mission = args.mission[0]
 
-    filename = get_filename(args)
-    if filename is None:
-        from checkio_client.actions.init import main as main_init
-        setattr(args, 'out', False)
-        setattr(args, 'without_info', False)
-        main_init(args)
-        filename = get_filename(args)
-
-
+    filename = get_filename_init(args)
 
     domain_data = conf.default_domain_data
 
