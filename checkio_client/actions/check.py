@@ -182,7 +182,11 @@ def main_run_cio(args):
 
     filename = get_filename(args)
     if filename is None:
-        init_single_mission(mission)
+        from checkio_client.actions.init import main as main_init
+        setattr(args, 'out', False)
+        setattr(args, 'without_info', False)
+        main_init(args)
+        filename = get_filename(args)
 
 
 
@@ -190,7 +194,6 @@ def main_run_cio(args):
 
     if 'executable' in domain_data:
         return subprocess.call((domain_data['executable'], filename))
-
     with open(filename, encoding="utf-8") as fh:
         data = run_solution(code_for_check(fh.read()))
     ret = False

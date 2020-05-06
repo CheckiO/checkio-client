@@ -48,7 +48,7 @@ class Config(configparser.ConfigParser):
             'url_main': 'https://js.checkio.org',
             'server_port': 2345,
             'server_host': 'py-tester.checkio.org',
-            'center_slug': 'js',
+            'center_slug': 'js-node',
             #'executable': 'node',
             'extension': 'js',
             'comment': '// ',
