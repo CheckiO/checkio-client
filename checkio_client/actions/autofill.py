@@ -130,12 +130,13 @@ def gen_folders(
         f_animation=None,
         f_descriptions=None,
         desc_tests=2,
+        is_multiple=True
         ):
     if f_tests is not None:
         tests = get_tests(f_tests)
 
     if f_init_py is not None and f_init_js is not None:
-        gen_inits(f_init_py, name_py, f_init_js, name_js, tests)
+        gen_inits(f_init_py, name_py, f_init_js, name_js, tests, is_multiple)
 
     if f_referee is not None:
         referee_filename = f_referee
@@ -183,13 +184,13 @@ def gen_folders(
             if name_py:
                 py_tests += '{funcname}({call}) == {out}\n'.format(
                     funcname=name_py,
-                    call=format_data(test['input'])[1:-1],
+                    call=format_data(test['input'])[1:-1] if is_multiple else format_data(test['input']),
                     out=format_data(test['answer'])
                 )
             if name_js:
                 js_tests += '{funcname}({call}) == {out}\n'.format(
                     funcname=name_js,
-                    call=format_data(test['input'], to_js=True)[1:-1],
+                    call=format_data(test['input'], to_js=True)[1:-1] if is_multiple else format_data(test['input'], to_js=True),
                     out=format_data(test['answer'], to_js=True)
                 )
 
@@ -230,6 +231,7 @@ def main(args):
             f_animation=os.path.join(folder, 'editor', 'animation', 'init.js'),
             f_descriptions=descriptions,
             desc_tests=args.desc_tests,
+            is_multiple=not args.not_multy,
         )
     
     print('Done.')

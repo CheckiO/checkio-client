@@ -99,6 +99,7 @@ p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
 p_autofill_repo.add_argument('--js-function', type=str)
 p_autofill_repo.add_argument('--py-function', type=str)
 p_autofill_repo.add_argument('--desc-tests', type=int, default=5)
+p_autofill_repo.add_argument('--not-multy', action='store_true')
 p_autofill_repo.set_defaults(module='autofill')
 
 
