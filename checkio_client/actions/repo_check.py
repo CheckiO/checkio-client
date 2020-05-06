@@ -84,7 +84,7 @@ async def tcp_echo_client(message, loop):
 
     logging.debug('Send: %r' % message)
     writer.write(message.encode() + b'\0')
-    logging.debug('Open ' + conf_data['url_main'] + '/mission/tester/')
+    logging.info('Open ' + conf_data['url_main'] + '/mission/tester/')
 
     while True:
         data = await reader.readuntil('\0'.encode())
@@ -127,7 +127,8 @@ async def do_tester_to_process(data, writer):
     UCH_PROCESS.sendData(data['data'])
 
 async def do_tester_auth_error(data, writer):
-    print('Wrong Key')
+    logging.error('Wrong key in config.ini file')
+    logging.info('You can find a correct Api Key here: ' + conf.default_domain_data['url_main'] + '/profile/edit/')
     sys.exit()
 
 #762 +
