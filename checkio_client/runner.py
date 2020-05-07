@@ -107,6 +107,9 @@ p_open.add_argument('mission', type=str, nargs='?', metavar='mission',
     help='slug for mission you want to open')
 p_open.set_defaults(module='open')
 
+p_upgrade = subparsers.add_parser('upgrade', help='upgrade current checkio-client')
+p_upgrade.set_defaults(module='open', func='main_upgrade')
+
 p_run_after = subparsers.add_parser('run', help='exec your solution')
 p_run_after.add_argument('mission', type=str, nargs=1, metavar='mission',
     help='slug for mission you want to check')
