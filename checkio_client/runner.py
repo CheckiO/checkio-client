@@ -168,8 +168,6 @@ p_plugin.add_argument('--chrome', action='store_true',
      help='uninstall for Chrome')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
-p_upgrade = subparsers.add_parser('upgrade', help='Upgrade CheckiO client using PIP')
-p_upgrade.set_defaults(module='system', func='upgrade')
 
 eoc_init_subparsers(subparsers)
 
