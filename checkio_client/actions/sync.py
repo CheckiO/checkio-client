@@ -3,12 +3,14 @@ import time
 import json
 import asyncio
 import logging
+from pathlib import Path
 
 from checkio_client.api import get_user_missions, save_code, get_user_single_mission,\
                                 api_request, api_request_get, get_server_time
 from checkio_client.utils.code import code_for_file, init_code_file, code_for_send,\
                             solutions_paths, gen_filename
 from checkio_client.settings import conf
+
 
 def sync_single_mission(mission):
     domain_data = conf.default_domain_data
@@ -26,6 +28,20 @@ def sync_single_mission(mission):
     init_code_file(filename, output)
     return filename
 
+
+def save_sync_config(folder):
+    domain_data = conf.default_domain_data
+    inifile = Path(folder) / 'checkio.ini'
+    if inifile.exists():
+        return
+
+    with open(str(inifile), 'w') as fh:
+        fh.write('''
+[Main]
+domain = {domain}
+            '''.format(domain=conf.default_domain))
+
+    print('Folder config "{}" created'.format(inifile))
 
 
 def main(args):
@@ -100,6 +116,8 @@ def main(args):
     if save_config:
         conf.default_domain_section['solutions'] = os.path.abspath(folder)
         conf.save()
+
+    save_sync_config(folder)
 
 async def send_strategy_file(websocket, name, content):
     logging.info('Send File: %s', name)
