@@ -89,6 +89,8 @@ p_check_after.add_argument('mission', type=str, nargs=1, metavar='mission',
     help='slug for mission you want to check')
 p_check_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
+p_check_after.add_argument('--sysinfo', action='store_true',
+     help='add system info in the end')
 add_check_paramas(p_check_after)
 p_check_after.set_defaults(module='check')
 
@@ -117,6 +119,8 @@ p_run_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
 p_run_after.add_argument('--check', action='store_true',
      help='and do check after')
+p_run_after.add_argument('--sysinfo', action='store_true',
+     help='add system info in the end')
 add_check_paramas(p_run_after)
 p_run_after.set_defaults(module='check', func='main_run')
 

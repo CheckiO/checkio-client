@@ -14,6 +14,9 @@ from checkio_client.utils.code import code_for_check, solutions_paths
 from checkio_client.actions.sync import sync_single_mission
 from checkio_client.actions.init import main as main_init
 
+SYSTEM_BLOCK_START = '---SYSTEMBLOCKSTART---'
+SYSTEM_BLOCK_END = '---SYSTEMBLOCKEND---'
+
 
 def lambda_game(func_name):
     def api_call(*args, **kwargs):
@@ -81,17 +84,28 @@ def main_check_cio(args):
                 print('!!' + str(res['answer']))
         elif com == 'check':
             if block[1]:
+                system_data = {
+                    'info': 'passed',
+                    'solutions_link': '{}/mission/{}/publications/'.format(
+                            domain_data['url_main'], mission
+                        ),
+                    'add_link': '{}/mission/{}/publications/add/'.format(
+                            domain_data['url_main'], mission
+                        )
+                }
                 print()
                 print('!!! Congratulation !!!')
                 print()
-                print('Link for checking solution of other users: {}/mission/{}/publications/'.format(
-                        domain_data['url_main'], mission
-                    ))
+                print('Link for checking solution of other users: ' + system_data['solutions_link'])
                 print()
-                print('Link for sharing solution: {}/mission/{}/publications/add/'.format(
-                        domain_data['url_main'], mission
-                    ))
+                print('Link for sharing solution: ' + system_data['add_link'])
                 print()
+
+                if args.sysinfo:
+                    print(SYSTEM_BLOCK_START)
+                    print(json.dumps(system_data, indent=1))
+                    print(SYSTEM_BLOCK_END)
+
             else:
                 print('!! Failed !!')
         elif com == 'wait':

@@ -64,7 +64,7 @@ def main(args):
         conf.save()
         return
 
-    paths = solutions_paths(folder)
+    paths = solutions_paths(folder) 
 
     print('Requesting...')
     data = get_user_missions()
