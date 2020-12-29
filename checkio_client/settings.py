@@ -36,7 +36,7 @@ class Config(configparser.ConfigParser):
             'server_port': 2325,
             'server_host': 'py-tester.checkio.org',
             'center_slug': 'python-3',
-            'executable': sys.executable,
+            #'executable': sys.executable,
             'extension': 'py',
             'comment': '# ',
             'game': 'cio',

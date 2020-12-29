@@ -145,19 +145,21 @@ def center_request(path, data):
     res = urllib.request.urlopen(req) # TODO: all kind of errors
     return json.loads('[' + res.read().decode('utf-8')[:-1] + ']')
 
-def check_solution(code, task_id):
+def check_solution(code, task_id, filename):
     domain_data = conf.default_domain_data
     return center_request('/ucheck/', {
             'code': code,
             'task_num': str(task_id),
-            'runner': domain_data['center_slug']
+            'runner': domain_data['center_slug'],
+            'user_filename': filename,
         })
 
-def run_solution(code):
+def run_solution(code, filename):
     domain_data = conf.default_domain_data
     return center_request('/run/', {
             'code': code,
-            'runner': domain_data['center_slug']
+            'runner': domain_data['center_slug'],
+            'user_filename': filename,
         })
 
 

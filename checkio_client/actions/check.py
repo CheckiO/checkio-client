@@ -68,7 +68,7 @@ def main_check_cio(args):
     mission_info = get_mission_info(mission)
     mission_id = mission_info['id']
     with open(filename, encoding="utf-8") as fh:
-        data = check_solution(code_for_check(fh.read()), mission_id)
+        data = check_solution(code_for_check(fh.read()), mission_id, filename)
     while data:
         block = data.pop(0)
         com = block[0]
@@ -213,7 +213,7 @@ def main_run_cio(args):
     if 'executable' in domain_data:
         return subprocess.call((domain_data['executable'], filename))
     with open(filename, encoding="utf-8") as fh:
-        data = run_solution(code_for_check(fh.read()))
+        data = run_solution(code_for_check(fh.read()), filename)
     ret = False
     while data:
         block = data.pop(0)
