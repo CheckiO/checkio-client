@@ -21,7 +21,7 @@ def main(args):
         exec_command([domain_data['editor'], domain_data['solutions']])
         return
 
-    setattr(args, 'mission', [args.mission])
+    setattr(args, 'mission', [args.mission.replace('_', '-')])
     filename = get_filename_init(args)
     open_editor([domain_data['editor'], filename])
 

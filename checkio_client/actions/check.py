@@ -55,7 +55,7 @@ main = lambda_game('main_check')
 
 def main_check_cio(args):
     filename = get_filename(args)
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
 
     domain_data = conf.default_domain_data
 
@@ -119,7 +119,7 @@ def main_check_cio(args):
 def main_check_eoc_local(args):
     from checkio_client.eoc.testing import execute_referee
     filename = get_filename(args)
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
 
     if args.recompile:
         from checkio_client.eoc.getters import recompile_mission
@@ -204,7 +204,7 @@ def main_run_cio(args):
         args.check = False # to avoid recursion
         return main(args)
 
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
 
     filename = get_filename_init(args)
 
@@ -245,7 +245,7 @@ def eoc_get_extra_volume(args):
 def main_run_eoc_local(args):
     from checkio_client.eoc.testing import execute_referee
     filename = get_filename(args)
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
 
     logging.info('Using: ' + filename)
     
