@@ -82,6 +82,7 @@ p_repo_check = subparsers.add_parser('checkrepo', help='you can test your missio
 p_repo_check.add_argument('folder', type=str, default='.', nargs=1,
     metavar='folder',
     help='path to the repository folder')
+p_repo_check.add_argument('--translation', type=str)
 p_repo_check.set_defaults(module='repo_check')
 
 p_check_after = subparsers.add_parser('check', help='test your solution')

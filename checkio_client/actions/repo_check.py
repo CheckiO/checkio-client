@@ -18,11 +18,21 @@ CIO_WRITER = None
 UCH_PROCESS = None
 PROCESS_PID = None
 PROCESS = None
+TRANS_FOLDER = None
 
 async def do_tester_get_files(data, writer):
     ret = {}
     for file_path in data['files'].split(','):
-        folder_path = os.path.join(REPO_FOLDER, file_path)
+        folder_path = None
+
+        if TRANS_FOLDER:
+            folder_path = os.path.join(TRANS_FOLDER, file_path)
+            if not os.path.exists(folder_path):
+                folder_path = None
+
+        if folder_path is None:
+            folder_path = os.path.join(REPO_FOLDER, file_path)
+            
         if not os.path.exists(folder_path):
             warnings.warn('File "' + folder_path + '" doesn\'t exist')
             continue
@@ -40,16 +50,14 @@ async def do_tester_get_files(data, writer):
 
 
 async def do_tester_get_file(data, writer):
-    folder_path = os.path.join(REPO_FOLDER, data['path'])
-    if not os.path.exists(folder_path):
-        warnings.warn('File "' + folder_path + '" doesn\'t exist')
-        await send_tester_data(writer, {
-            'do': 'answer',
-            'error': "File doesn't exist",
-            'question': data['question'],
-            'path': data['path']
-        })
-    else:
+    folder_path = None
+
+    if TRANS_FOLDER:
+        folder_path = os.path.join(TRANS_FOLDER, data['path'])
+        if not os.path.exists(folder_path):
+            folder_path = None
+
+    if folder_path:
         try:
             fh = open(folder_path, "rb")
             fdata = fh.read()
@@ -69,6 +77,36 @@ async def do_tester_get_file(data, writer):
                 'question': data['question'],
                 'path': data['path']
             })
+    else:
+        folder_path = os.path.join(REPO_FOLDER, data['path'])
+        if not os.path.exists(folder_path):
+            warnings.warn('File "' + folder_path + '" doesn\'t exist')
+            await send_tester_data(writer, {
+                'do': 'answer',
+                'error': "File doesn't exist",
+                'question': data['question'],
+                'path': data['path']
+            })
+        else:
+            try:
+                fh = open(folder_path, "rb")
+                fdata = fh.read()
+                fh.close()
+            except IOError as e:
+                warnings.warn('Error during oppening file "' + folder_path + '" :' + str(e))
+                await send_tester_data(writer, {
+                    'do': 'answer',
+                    'error': "Open error",
+                    'question': data['question'],
+                    'path': data['path']
+                })
+            else:
+                await send_tester_data(writer, {
+                    'do': 'answer',
+                    'data': base64.standard_b64encode(fdata).decode('utf8'),
+                    'question': data['question'],
+                    'path': data['path']
+                })
 
 
 async def send_tester_data(writer, data):
@@ -168,7 +206,11 @@ class EchoServerClientProtocol(asyncio.Protocol):
 
 def main(args):
     global REPO_FOLDER
+    global TRANS_FOLDER
+
     REPO_FOLDER = args.folder[0]
+    if args.translation:
+        TRANS_FOLDER = os.path.join(REPO_FOLDER, 'translations', args.translation)
     AUTH_KEY = conf.default_domain_data['key']
     message = '{"do": "connect", "key": "' + AUTH_KEY + '"}'
     if sys.platform == 'win32':
