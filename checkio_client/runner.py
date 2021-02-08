@@ -7,6 +7,9 @@ import shlex
 from checkio_client.eoc_runner import init_subparsers as eoc_init_subparsers,\
     add_check_paramas
 import logging
+import platform
+
+
 LEVELS = [logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
 
 parser = argparse.ArgumentParser(prog='checkio')
@@ -189,7 +192,10 @@ def apply_main_args(args=None):
 
 def main():
     # because of calling inside of #!/usr/bin/
-    call_args = sum(map(lambda a: shlex.split(a), sys.argv[1:]), [])
+    if platform.system() == 'Windows':
+        call_args = sys.argv[1:]
+    else:
+        call_args = sum(map(lambda a: shlex.split(a), sys.argv[1:]), [])
     args = parser.parse_args(call_args)
 
     logging.basicConfig(level=LEVELS[args.verbose])
