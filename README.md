@@ -46,7 +46,7 @@ and the detailed help for a specific command by using (for example, for a `confi
 $ checkio config -h
 ```
 
-The configuration process will create `.checkio` in your home folder along with the `config.ini` file in it
+The configuration process will create a configuration directory in `$XDG_CONFIG_HOME` or your home folder with a `config.ini` file inside.
 
 ```
 [Main]
