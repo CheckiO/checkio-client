@@ -23,7 +23,7 @@ def main(args):
 
     setattr(args, 'mission', [args.mission.replace('_', '-')])
     filename = get_filename_init(args)
-    open_editor([domain_data['editor'], filename])
+    exec_command([domain_data['editor'], filename])
 
 def main_upgrade(args):
     exec_command([sys.executable, '-mpip', 'install', '--upgrade', 'checkio-client'])
