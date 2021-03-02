@@ -8,7 +8,7 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 2, 12)
+VERSION = (0, 2, 13)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
@@ -51,7 +51,7 @@ class Config(configparser.ConfigParser):
         'js': {
             'url_main': 'https://js.checkio.org',
             'server_port': 2345,
-            'server_host': 'py-tester.checkio.org',
+            'server_host': 'js-tester.checkio.org',
             'center_slug': 'js-node',
             #'executable': 'node',
             'extension': 'js',
