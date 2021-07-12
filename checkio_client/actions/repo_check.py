@@ -20,6 +20,7 @@ PROCESS_PID = None
 PROCESS = None
 TRANS_FOLDER = None
 
+
 async def do_tester_get_files(data, writer):
     ret = {}
     for file_path in data['files'].split(','):
@@ -44,6 +45,20 @@ async def do_tester_get_files(data, writer):
             warnings.warn('Error during oppening file "' + folder_path + '" :' + str(e))
             continue
 
+    ret['question'] = data['question']
+    ret['do'] = 'answer'
+    await send_tester_data(writer, ret)
+
+
+async def do_tester_get_tests(data, writer):
+    ret = {}
+    tests_path = os.path.join(REPO_FOLDER, 'verification/tests.py')
+    with open(tests_path) as fh:
+        test_code = fh.read()
+        env_code = {}
+        exec(test_code, env_code)
+        ret['tests'] = env_code['TESTS']
+        
     ret['question'] = data['question']
     ret['do'] = 'answer'
     await send_tester_data(writer, ret)

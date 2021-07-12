@@ -9,6 +9,7 @@ from checkio_client.eoc_runner import init_subparsers as eoc_init_subparsers,\
 import logging
 import platform
 
+#import pdb; pdb.set_trace();
 
 LEVELS = [logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
 
