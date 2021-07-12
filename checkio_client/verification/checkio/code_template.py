@@ -1,4 +1,9 @@
-import django
+try:
+    import django
+except ImportError:
+    import sys
+    raise ImportError('In order to use io_template you should install Django first. Please do {} -mpip install django'.format(sys.executable))
+
 from django.conf import settings
 from django.template import Template, Context, NodeList
 from django.template.loader_tags import BlockNode
