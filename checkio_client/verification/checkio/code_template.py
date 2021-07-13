@@ -1,9 +1,12 @@
+import json
+
 try:
     import django
 except ImportError:
     import sys
     raise ImportError('In order to use io_template you should install Django first. Please do {} -mpip install django'.format(sys.executable))
 
+from django import template
 from django.conf import settings
 from django.template import Template, Context, NodeList
 from django.template.loader_tags import BlockNode
@@ -11,6 +14,12 @@ from django.template.loader_tags import BlockNode
 
 settings.configure(TEMPLATES=[{'BACKEND': 'django.template.backends.django.DjangoTemplates',}])
 django.setup()
+
+register = template.Library()
+
+@register.filter(name='j')
+def filter_json_dumps(val):
+    return json.dumps(val)
 
 
 class StripBlockNode(BlockNode):
@@ -51,6 +60,9 @@ class CodeTemplate(Template):
                 return ret
             
     def compile_nodelist(self):
+        if register not in self.engine.template_builtins:
+            self.engine.template_builtins += [register]
+
         ret = super().compile_nodelist()
         self.replace_nodes(ret)
         
