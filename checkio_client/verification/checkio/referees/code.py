@@ -2,9 +2,6 @@ from checkio import api
 
 from checkio.referees.io import CheckiOReferee
 
-REQ = 'req'
-REFEREE = 'referee'
-
 
 class CheckiORefereeCode(CheckiOReferee):
 
@@ -28,7 +25,7 @@ class CheckiORefereeCode(CheckiOReferee):
     def test_current_step(self):
         self.current_test = self.get_current_test()
         self.current_test["runner"] = self.runner
-        api.request_write_in(self.current_test["show"][self.runner], REQ)
+        api.request_write_in(self.current_test["show"][self.runner])
         api.sys_runner(code=self.current_test["test_code"].get(self.runner),
                        callback=self.check_current_test,
                        errback=self.fail_cur_step)

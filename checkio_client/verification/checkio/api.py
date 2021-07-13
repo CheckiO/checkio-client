@@ -1,7 +1,9 @@
 from checkio.signals import LISTENERS, WAITERS, ERR_WAITERS, PROCESS_LISTENERS
 import echo
 
-DEFAULT_RUNNER_PREFIX = 'req'
+REQ = 'req'
+REFEREE = 'referee'
+DEFAULT_RUNNER_PREFIX = REQ
 DEFAULT_FUNCTION = 'checkio'
 
 WAITER_COUNTER = 0
@@ -121,8 +123,12 @@ def request_write_start_in(name):
     request_write(["start_in", name])
 
 
-def request_write_in(data, process):
-    request_write(["in", data, process])
+def request_write_in(data, process=DEFAULT_RUNNER_PREFIX, extra=None):
+    request_write(["in", data, process, extra])
+
+
+def request_write_out(data, process=DEFAULT_RUNNER_PREFIX, extra=None):
+    request_write(["out", data, process, extra])
 
 
 def request_write_ext(data):

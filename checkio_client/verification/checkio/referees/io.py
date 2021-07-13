@@ -56,18 +56,21 @@ class CheckiOReferee(object):
         self.start_env()
         api.add_process_listener(REQ, PROCESS_ENDED, self.process_req_ended)
 
+    def start_env_params(self):
+        return dict(code=self.code,
+                runner=self.runner,
+                prefix=REQ,
+                controller_type=SIMPLE,
+                callback=self.run_success,
+                errback=self.run_fail,
+                add_close_builtins=self.add_close_builtins,
+                add_allowed_modules=self.add_allowed_modules,
+                remove_allowed_modules=self.remove_allowed_modules,
+                write_execute_data=True,
+                cover_code=self.cover_code.get(self.runner))
+
     def start_env(self):
-        api.start_runner(code=self.code,
-                         runner=self.runner,
-                         prefix=REQ,
-                         controller_type=SIMPLE,
-                         callback=self.run_success,
-                         errback=self.run_fail,
-                         add_close_builtins=self.add_close_builtins,
-                         add_allowed_modules=self.add_allowed_modules,
-                         remove_allowed_modules=self.remove_allowed_modules,
-                         write_execute_data=True,
-                         cover_code=self.cover_code.get(self.runner))
+        api.start_runner(**self.start_env_params())
 
     def run_success(self, data):
         self.current_category = self.get_current_env_name()
@@ -79,12 +82,15 @@ class CheckiOReferee(object):
     def run_fail(self, data):
         api.fail(self.current_step)
 
-    def test_current_step(self):
-        self.current_test = self.get_current_test()
+    def execute_current_test(self):
         api.execute_function(input_data=self.current_test["input"],
                              callback=self.check_current_test,
                              errback=self.fail_cur_step,
                              func=self.function_name)
+
+    def test_current_step(self):
+        self.current_test = self.get_current_test()
+        self.execute_current_test()
 
     def get_current_env_name(self):
         return self.categories_names[self.current_category_index]
