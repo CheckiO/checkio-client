@@ -84,17 +84,17 @@ def compile_call_template(template):
     return CodeTemplate(template, one_node='call')
 
 def render_call_template(compiled_template, input_data):
-    return compiled_template.render(Context({'t': {'input': input_data}})).strip()
+    return compiled_template.render(Context({'t': {'input': input_data}}, autoescape=False)).strip()
 
 def compile_result_template(template):
     return CodeTemplate(template, one_node='result')
 
 def render_result_template(compiled_template, answer_data):
-    return compiled_template.render(Context({'t': {'answer': answer_data}})).strip()
+    return compiled_template.render(Context({'t': {'answer': answer_data}}, autoescape=False)).strip()
 
 def compile_assert_template(template):
     return CodeTemplate(template, one_node='tests')
 
 def render_assert_template(compiled_template, input_data, answer_data):
     return compiled_template.render(Context({'tests': [
-        {'input': input_data, 'answer': answer_data}]})).strip()
+        {'input': input_data, 'answer': answer_data}]}, autoescape=False)).strip()
