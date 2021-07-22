@@ -10,7 +10,7 @@ from ..code_template import (
 class CheckiOReferee(BaseCheckiOReferee):
     @cached_property
     def code_template_file_name(self):
-        return os.path.join(os.getenv('FOLDER_USER'), '..', 'editor', 'initial_code', 'python_3.tmpl')
+        return os.path.join(os.getenv('FOLDER_USER'), '..', 'editor', 'initial_code', self.runner.replace('-', '_') + '.tmpl')
 
     @cached_property
     def code_template_file_exist(self):
