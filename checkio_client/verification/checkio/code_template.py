@@ -22,6 +22,11 @@ def filter_json_dumps(val):
     return json.dumps(val)
 
 
+@register.filter(name='p')
+def filter_repr(val):
+    return repr(val)
+
+
 class StripBlockNode(BlockNode):
     def __init__(self, block_node):
         super().__init__(block_node.name, block_node.nodelist, block_node.parent)
