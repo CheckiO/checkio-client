@@ -7,7 +7,7 @@ import asyncio
 #import logging
 
 from checkio_client.runner import apply_main_args
-from checkio_client.settings import conf, Config
+from checkio_client.settings import conf, Config, VERSION
 from checkio_client.utils.code import solutions_paths, code_for_sync,\
                                     get_end_desc_line, gen_filename,\
                                     init_code_file, gen_env_line
@@ -65,7 +65,8 @@ class Actions:
                 'do': 'initContent',
                 'filename': filename,
                 'content': content,
-                'slug': data['slug']
+                'slug': data['slug'],
+                'version': VERSION,
             }
         else:
             filename = gen_filename(data['slug'], data['station'])

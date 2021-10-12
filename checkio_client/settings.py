@@ -8,7 +8,7 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 2, 18)
+VERSION = (0, 2, 19)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
@@ -98,6 +98,9 @@ class Config(configparser.ConfigParser):
 
     inter_to_domain = {v['center_slug']: k for k,v in domains.items()}
     default_domain = 'py'
+    serv_port = 8766
+    serv_pidfile = os.path.join(foldername, 'serv.pid')
+
 
     local_uch_port = 2323
 

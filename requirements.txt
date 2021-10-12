@@ -1,2 +1,6 @@
 websockets==9.1
 requests==2.20.0
+aiohttp==3.7.4.post0
+aiohttp-cors==0.7.0
+python-daemon==2.3.0
+pid==3.0.4

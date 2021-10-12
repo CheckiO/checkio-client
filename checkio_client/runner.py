@@ -177,6 +177,13 @@ p_plugin.add_argument('--chrome', action='store_true',
      help='uninstall for Chrome')
 p_plugin.set_defaults(module='plugin', func='uninstall')
 
+p_serv = subparsers.add_parser('serv', help='Start server to work with UI in browser')
+p_serv.add_argument('-d', '--daemon', action='store_true',
+     help='start as a daemon')
+p_serv.set_defaults(module='server')
+
+p_serv_stop = subparsers.add_parser('servd-stop', help='Stop serv which was started as serv -d')
+p_serv_stop.set_defaults(module='server', func='stop')
 
 eoc_init_subparsers(subparsers)
 
