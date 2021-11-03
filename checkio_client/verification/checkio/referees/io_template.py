@@ -7,6 +7,8 @@ from ..code_template import (
     compile_call_template, render_call_template, compile_result_template, render_result_template,
     compile_assert_template, render_assert_template)
 
+from checkio_json_serializer import object_cover, object_uncover
+
 class CheckiOReferee(BaseCheckiOReferee):
     @cached_property
     def code_template_file_name(self):
@@ -39,7 +41,7 @@ class CheckiOReferee(BaseCheckiOReferee):
         return kwargs
 
     def execute_current_test(self):
-        api.request_write_in(self.current_test["input"], extra={
+        api.request_write_in(object_cover(self.current_test["input"]), extra={
             'assert': render_assert_template(self.assert_template, self.current_test["input"], self.current_test["answer"]),
             'call': render_call_template(self.call_template, self.current_test["input"]),
             'answer': render_result_template(self.result_template, self.current_test["answer"]),
@@ -50,7 +52,7 @@ class CheckiOReferee(BaseCheckiOReferee):
         ret = super().check_user_answer(result)
 
         api.request_write_out(result, extra={
-            'answer': render_result_template(self.result_template, result),
+            'answer': render_result_template(self.result_template, object_uncover(result)),
             'correct': ret[0],
         })
 

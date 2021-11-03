@@ -9,6 +9,7 @@ import logging
 import warnings
 
 from checkio_client.settings import conf
+from checkio_json_serializer import dumps
 
 REPO_FOLDER = None
 
@@ -125,7 +126,7 @@ async def do_tester_get_file(data, writer):
 
 
 async def send_tester_data(writer, data):
-    writer.write(json.dumps(data).encode() + b'\0')
+    writer.write(dumps(data).encode() + b'\0')
 
 async def tcp_echo_client(message, loop):
     global CIO_WRITER

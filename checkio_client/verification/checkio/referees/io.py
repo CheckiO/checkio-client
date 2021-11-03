@@ -4,6 +4,8 @@ from checkio.api import DEFAULT_FUNCTION
 
 from checkio.runner_types import SIMPLE, JS_RUNNER_SLUG
 
+from checkio_json_serializer import object_cover, object_uncover
+
 
 REQ = 'req'
 REFEREE = 'referee'
@@ -83,7 +85,7 @@ class CheckiOReferee(object):
         api.fail(self.current_step)
 
     def execute_current_test(self):
-        api.execute_function(input_data=self.current_test["input"],
+        api.execute_function(input_data=object_cover(self.current_test["input"]),
                              callback=self.check_current_test,
                              errback=self.fail_cur_step,
                              func=self.function_name)
@@ -112,7 +114,7 @@ class CheckiOReferee(object):
         check_result = self.check_user_answer(user_result)
         self.current_test["result"], self.current_test["result_addon"] = check_result
 
-        api.request_write_ext(self.current_test)
+        api.request_write_ext(object_cover(self.current_test))
 
         if not self.current_test["result"]:
             return api.fail(self.current_step, self.get_current_test_fullname())
@@ -126,6 +128,7 @@ class CheckiOReferee(object):
                 api.success()
 
     def check_user_answer(self, result):
+        result = object_uncover(result)
         if self.checker:
             return self.checker(self.current_test["answer"], result)
         else:

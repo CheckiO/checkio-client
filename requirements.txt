@@ -4,3 +4,4 @@ aiohttp==3.7.4.post0
 aiohttp-cors==0.7.0
 python-daemon==2.3.0
 pid==3.0.4
+checkio-json-serializer==0.2.3

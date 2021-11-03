@@ -8,11 +8,11 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 2, 19)
+VERSION = (0, 2, 20)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
-CIO_TEMPLATE_FOLDER = 'https://github.com/CheckiO/checkio-mission-template.git'
+CIO_TEMPLATE_FOLDER = 'https://github.com/CheckiO/checkio-mission-template2.git'
 EOC_TEMPLATE_FOLDER = 'https://github.com/oduvan/eoc-template.git'
 
 def get_fodler(folder):
