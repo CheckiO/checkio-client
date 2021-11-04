@@ -10,6 +10,8 @@ from ..code_template import (
 from checkio_json_serializer import object_cover, object_uncover
 
 class CheckiOReferee(BaseCheckiOReferee):
+    skip_json_serializer = False
+    
     @cached_property
     def code_template_file_name(self):
         return os.path.join(os.getenv('FOLDER_USER'), '..', 'editor', 'initial_code', self.runner.replace('-', '_') + '.tmpl')

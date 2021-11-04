@@ -38,7 +38,7 @@ def add_process_listener(prefix, signal, callback):
 def start_runner(code, runner, controller_type, callback,
                  prefix=DEFAULT_RUNNER_PREFIX, errback=None,
                  add_close_builtins=None, add_allowed_modules=None, remove_allowed_modules=None,
-                 write_execute_data=False, cover_code=None, name='__check__'):
+                 write_execute_data=False, cover_code=None, name='__check__', skip_json_serializer=True):
     wcode = add_waiter(callback, errback)
     echo.send_json({
         'do': 'start_runner',
@@ -52,7 +52,8 @@ def start_runner(code, runner, controller_type, callback,
             'add_close_builtins': add_close_builtins,
             'add_allowed_modules': add_allowed_modules,
             'remove_allowed_modules': remove_allowed_modules,
-            'cover_code': cover_code
+            'cover_code': cover_code,
+            'skip_json_serializer': skip_json_serializer,
         },
         'config': {
             'write_execute_data': write_execute_data

@@ -19,6 +19,7 @@ class CheckiOReferee(object):
     current_test_index = 0
     tests = None
     restarting_env = False
+    skip_json_serializer = True
 
     def __init__(self,
                  tests,
@@ -69,7 +70,9 @@ class CheckiOReferee(object):
                 add_allowed_modules=self.add_allowed_modules,
                 remove_allowed_modules=self.remove_allowed_modules,
                 write_execute_data=True,
-                cover_code=self.cover_code.get(self.runner))
+                cover_code=self.cover_code.get(self.runner),
+                skip_json_serializer=self.skip_json_serializer,
+            )
 
     def start_env(self):
         api.start_runner(**self.start_env_params())
