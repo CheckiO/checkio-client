@@ -10,8 +10,11 @@ from ..code_template import (
 from checkio_json_serializer import object_cover, object_uncover
 
 class CheckiOReferee(BaseCheckiOReferee):
-    skip_json_serializer = False
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tests = object_cover(self.tests)
+
     @cached_property
     def code_template_file_name(self):
         return os.path.join(os.getenv('FOLDER_USER'), '..', 'editor', 'initial_code', self.runner.replace('-', '_') + '.tmpl')
@@ -43,10 +46,11 @@ class CheckiOReferee(BaseCheckiOReferee):
         return kwargs
 
     def execute_current_test(self):
-        api.request_write_in(object_cover(self.current_test["input"]), extra={
-            'assert': render_assert_template(self.assert_template, self.current_test["input"], self.current_test["answer"]),
-            'call': render_call_template(self.call_template, self.current_test["input"]),
-            'answer': render_result_template(self.result_template, self.current_test["answer"]),
+        current_test = object_uncover(self.current_test)
+        api.request_write_in(self.current_test["input"], extra={
+            'assert': render_assert_template(self.assert_template, current_test["input"], current_test["answer"]),
+            'call': render_call_template(self.call_template, current_test["input"]),
+            'answer': render_result_template(self.result_template, current_test["answer"]),
         })
         super().execute_current_test()
 

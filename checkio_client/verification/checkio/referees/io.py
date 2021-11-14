@@ -4,8 +4,6 @@ from checkio.api import DEFAULT_FUNCTION
 
 from checkio.runner_types import SIMPLE, JS_RUNNER_SLUG
 
-from checkio_json_serializer import object_cover, object_uncover
-
 
 REQ = 'req'
 REFEREE = 'referee'
@@ -19,7 +17,6 @@ class CheckiOReferee(object):
     current_test_index = 0
     tests = None
     restarting_env = False
-    skip_json_serializer = True
 
     def __init__(self,
                  tests,
@@ -71,7 +68,6 @@ class CheckiOReferee(object):
                 remove_allowed_modules=self.remove_allowed_modules,
                 write_execute_data=True,
                 cover_code=self.cover_code.get(self.runner),
-                skip_json_serializer=self.skip_json_serializer,
             )
 
     def start_env(self):
@@ -88,7 +84,7 @@ class CheckiOReferee(object):
         api.fail(self.current_step)
 
     def execute_current_test(self):
-        api.execute_function(input_data=object_cover(self.current_test["input"]),
+        api.execute_function(input_data=self.current_test["input"],
                              callback=self.check_current_test,
                              errback=self.fail_cur_step,
                              func=self.function_name)
@@ -112,12 +108,12 @@ class CheckiOReferee(object):
                 self.current_test["inspector_fail"] = True
                 api.request_write_ext(self.current_test)
                 return api.fail(0, inspector_result_addon)
-        user_result = data['result']
+        user_result = data.get('result')
 
         check_result = self.check_user_answer(user_result)
         self.current_test["result"], self.current_test["result_addon"] = check_result
 
-        api.request_write_ext(object_cover(self.current_test))
+        api.request_write_ext(self.current_test)
 
         if not self.current_test["result"]:
             return api.fail(self.current_step, self.get_current_test_fullname())
@@ -131,7 +127,6 @@ class CheckiOReferee(object):
                 api.success()
 
     def check_user_answer(self, result):
-        result = object_uncover(result)
         if self.checker:
             return self.checker(self.current_test["answer"], result)
         else:

@@ -17,9 +17,38 @@ django.setup()
 
 register = template.Library()
 
+
+class JEncoder(json.JSONEncoder):
+    def iterencode(self, value, *args, **kwargs):
+        if isinstance(value, set):
+            return 'new Set(' + json.dumps(list(value), cls=JEncoder) + ')'
+
+        from decimal import Decimal
+        if isinstance(value, Decimal):
+            return str(value)
+
+        from datetime import datetime, date
+        if isinstance(value, date):
+            return 'new Date({}, {}, {})'.format(
+                value.year,
+                value.month,
+                value.day,
+            )
+        if isinstance(value, datetime):
+            return 'new Date({}, {}, {}, {}, {}, {})'.format(
+                value.year,
+                value.month,
+                value.day,
+                value.hour,
+                value.minute,
+                value.second,
+            )
+        return super().iterencode(value, *args, **kwargs)
+
+
 @register.filter(name='j')
 def filter_json_dumps(val):
-    return json.dumps(val)
+    return json.dumps(val, cls=JEncoder)
 
 
 @register.filter(name='p')
