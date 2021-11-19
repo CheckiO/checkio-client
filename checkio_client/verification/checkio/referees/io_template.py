@@ -64,3 +64,11 @@ class CheckiOReferee(BaseCheckiOReferee):
 
         return ret
 
+    def check_user_answer(self, result):
+        result = object_uncover(result)
+        answer = object_uncover(self.current_test["answer"])
+        if self.checker:
+            return self.checker(answer, result)
+        else:
+            return answer == result, None
+

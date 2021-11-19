@@ -31,13 +31,13 @@ class JEncoder(json.JSONEncoder):
         if isinstance(value, date):
             return 'new Date({}, {}, {})'.format(
                 value.year,
-                value.month,
+                value.month - 1,
                 value.day,
             )
         if isinstance(value, datetime):
             return 'new Date({}, {}, {}, {}, {}, {})'.format(
                 value.year,
-                value.month,
+                value.month - 1,
                 value.day,
                 value.hour,
                 value.minute,
