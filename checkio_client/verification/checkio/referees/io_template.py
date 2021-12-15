@@ -54,15 +54,16 @@ class CheckiOReferee(BaseCheckiOReferee):
         })
         super().execute_current_test()
 
-    def check_user_answer(self, result):
-        result = object_uncover(result)
+    def check_user_answer(self, _result):
+        result = object_uncover(_result)
         answer = object_uncover(self.current_test["answer"])
+
         if self.checker:
             ret = self.checker(answer, result)
         else:
-            ret = answer == result, None
+            ret = (answer == result, None)
 
-        api.request_write_out(result, extra={
+        api.request_write_out(_result, extra={
             'answer': render_result_template(self.result_template, result),
             'correct': ret[0],
         })
