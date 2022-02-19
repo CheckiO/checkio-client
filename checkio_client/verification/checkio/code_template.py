@@ -51,9 +51,19 @@ def filter_json_dumps(val):
     return json.dumps(val, cls=JEncoder)
 
 
+@register.filter(name='j_args')
+def filter_json_dumps_args(vals):
+    return ", ".join([json.dumps(val, cls=JEncoder) for val in vals])
+
+
 @register.filter(name='p')
 def filter_repr(val):
     return repr(val)
+
+
+@register.filter(name='p_args')
+def filter_repr_args(vals):
+    return ", ".join([repr(val) for val in vals])
 
 
 class StripBlockNode(BlockNode):
