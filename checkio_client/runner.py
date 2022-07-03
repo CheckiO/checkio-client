@@ -99,16 +99,6 @@ p_check_after.add_argument('--sysinfo', action='store_true',
 add_check_paramas(p_check_after)
 p_check_after.set_defaults(module='check')
 
-p_autofill_repo = subparsers.add_parser('autofillrepo', help='fill up animation, referee, description and initial code by basic tests and passed names for function')
-p_autofill_repo.add_argument('folder', type=str, default='.', nargs='?',
-    metavar='folder',
-    help='path to the repository folder')
-p_autofill_repo.add_argument('--js-function', type=str)
-p_autofill_repo.add_argument('--py-function', type=str)
-p_autofill_repo.add_argument('--desc-tests', type=int, default=5)
-p_autofill_repo.add_argument('--not-multy', action='store_true')
-p_autofill_repo.set_defaults(module='autofill')
-
 p_open = subparsers.add_parser('open', help='open editor for solving puzzles')
 p_open.add_argument('mission', type=str, nargs='?', metavar='mission',
     help='slug for mission you want to open')
@@ -124,6 +114,10 @@ p_run_after.add_argument('filename', type=str, nargs='?', metavar='filename',
     help='path to the file with solution')
 p_run_after.add_argument('--check', action='store_true',
      help='and do check after')
+p_run_after.add_argument('--use-server-run', action='store_true',
+     help='use server run instead of local run (overwrites use_server_run=false)')
+p_run_after.add_argument('--use-local-run', action='store_true',
+     help='use local run instead of server run (overwrites use_server_run=true)')
 p_run_after.add_argument('--sysinfo', action='store_true',
      help='add system info in the end')
 add_check_paramas(p_run_after)
@@ -184,6 +178,9 @@ p_serv.set_defaults(module='server')
 
 p_serv_stop = subparsers.add_parser('servd-stop', help='Stop serv which was started as serv -d')
 p_serv_stop.set_defaults(module='server', func='stop')
+
+p_serv_restart = subparsers.add_parser('servd-restart', help='Restart serv which was started as serv -d')
+p_serv_restart.set_defaults(module='server', func='restart')
 
 eoc_init_subparsers(subparsers)
 

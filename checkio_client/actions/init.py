@@ -13,8 +13,9 @@ def main(args):
     if not args.out:
         print('Requesting...')
 
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
     data = get_mission_info(mission)
+
     code = data['code']
     description = data['description']
 

@@ -34,7 +34,7 @@ def get_filename(args):
     if 'solutions' not in default_data:
         raise ValueError('Solutions folder is not defined')
 
-    mission = args.mission[0]
+    mission = args.mission[0].replace('_', '-')
     try:
         return solutions_paths()[mission]
     except KeyError:
@@ -69,18 +69,30 @@ def main_check_cio(args):
     mission_id = mission_info['id']
     with open(filename, encoding="utf-8") as fh:
         data = check_solution(code_for_check(fh.read()), mission_id)
+
+    new_version = False
     while data:
         block = data.pop(0)
         com = block[0]
         if com == 'start_in':
             print('*** ' + block[1] + ' ***' )
         elif com == 'in':
-            print('->' + str(block[1]))
+            if len(block) >= 4 and 'assert' in block[3]:
+                new_version = True
+                print('{} ...'.format(block[3]['assert']), end='')
+            else:
+                print('->' + str(block[1]))
         elif com == 'out':
-            print('<-' + str(block[1]))
+            if len(block) >= 4 and 'correct' in block[3]:
+                if block[3]['correct']:
+                    print('ok')
+                else:
+                    print('Fail')
+            else:
+                print('<-' + str(block[1]))
         elif com == 'ext':
             res = block[1]
-            if not res['result']:
+            if not res['result'] and not new_version:
                 print('!!' + str(res['answer']))
         elif com == 'check':
             if block[1]:
@@ -210,8 +222,21 @@ def main_run_cio(args):
 
     domain_data = conf.default_domain_data
 
-    if 'executable' in domain_data:
+    use_server_run = domain_data['use_server_run']
+
+    if use_server_run:
+        if args.use_local_run:
+            use_server_run = False
+    else:
+        if args.use_server_run:
+            use_server_run = True
+
+    if not use_server_run and not domain_data.get('executable'):
+        raise ValueError('For the local run executable should be set')
+
+    if not use_server_run:
         return subprocess.call((domain_data['executable'], filename))
+
     with open(filename, encoding="utf-8") as fh:
         data = run_solution(code_for_check(fh.read()))
     ret = False

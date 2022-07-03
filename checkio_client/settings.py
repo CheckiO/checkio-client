@@ -8,15 +8,27 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 2, 26)
+VERSION = (0, 2, 27)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 
 CIO_TEMPLATE_FOLDER = 'https://github.com/CheckiO/checkio-mission-template2.git'
 EOC_TEMPLATE_FOLDER = 'https://github.com/oduvan/eoc-template.git'
 
+CONFIG_TRUE_VALUES = ('1', 'yes', 'true', 'on')
+CONFIG_FALSE_VALUES = ('0', 'no', 'false', 'off')
+
 def get_fodler(folder):
     return os.path.expanduser(os.path.join('~', folder))
+
+def v_boolean(value):
+    if value in CONFIG_TRUE_VALUES:
+        return True
+
+    if value in CONFIG_FALSE_VALUES:
+        return False
+
+    raise ValueError('not in set of possible values {}'.format(CONFIG_TRUE_VALUES + CONFIG_FALSE_VALUES))
 
 class Config(configparser.ConfigParser):
     xdg = os.getenv('XDG_CONFIG_HOME')
@@ -40,6 +52,7 @@ class Config(configparser.ConfigParser):
             'server_port': 2325,
             'server_host': 'py-tester.checkio.org',
             'center_slug': 'python-3',
+            'use_server_run': False,
             'executable': sys.executable,
             'extension': 'py',
             'comment': '# ',
@@ -53,7 +66,8 @@ class Config(configparser.ConfigParser):
             'server_port': 2345,
             'server_host': 'js-tester.checkio.org',
             'center_slug': 'js-node',
-            #'executable': 'node',
+            'use_server_run': True,
+            'executable': 'node',
             'extension': 'js',
             'comment': '// ',
             'game': 'cio',
@@ -92,6 +106,10 @@ class Config(configparser.ConfigParser):
             'interpreter': 'js_node',
             'repo_template': EOC_TEMPLATE_FOLDER,
         }
+    }
+
+    validators = {
+        'use_server_run': v_boolean
     }
 
     _initial_domains = deepcopy(domains)
@@ -146,6 +164,11 @@ class Config(configparser.ConfigParser):
                 continue
             for key in self[section_name]:
                 self.domains[d_key][key] = self[section_name][key]
+                if key in self.validators:
+                    try:
+                        self.domains[d_key][key] = self.validators[key](self.domains[d_key][key])
+                    except ValueError as e:
+                        raise ValueError('{}->{}={} {}'.format(section_name, key, self.domains[d_key][key], e))
 
     def reload(self):
         self.domains = deepcopy(self._initial_domains)

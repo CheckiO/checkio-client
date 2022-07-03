@@ -29,17 +29,20 @@ def start_server():
     cors.add(web_app.router.add_post('/plugin/', view_plugin))
     web.run_app(web_app, port=8766, host='localhost')
 
+def serverd():
+    import daemon
+    from pid import PidFile
+    pidfile = PidFile(conf.serv_pidfile)
+    with daemon.DaemonContext(pidfile=pidfile):
+        start_server()
+
 def main(args):
     if args.daemon:
-        import daemon
-        from pid import PidFile
-        pidfile = PidFile(conf.serv_pidfile)
-        with daemon.DaemonContext(pidfile=pidfile):
-            start_server()
+        serverd()
     else:
         start_server()
     
-def stop(args):
+def stop(args=None):
     try:
         with open(conf.serv_pidfile) as fh:
             os.kill(int(fh.read()), signal.SIGTERM)
@@ -47,3 +50,7 @@ def stop(args):
         print('PIDFile "{}" not found. Server is not running now?'.format(conf.serv_pidfile))
     except ProcessLookupError:
         print('Process from PIDFile "{}" not found. Server is not running now?'.format(conf.serv_pidfile))
+
+def restart(args):
+    stop()
+    serverd()
