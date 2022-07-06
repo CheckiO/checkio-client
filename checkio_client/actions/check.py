@@ -10,7 +10,7 @@ import os
 from checkio_client.settings import conf
 from checkio_client.api import get_mission_info, check_solution,\
     restore, run_solution
-from checkio_client.utils.code import code_for_check, solutions_paths
+from checkio_client.utils.code import code_for_check, solutions_paths, parse_env_line
 from checkio_client.actions.sync import sync_single_mission
 from checkio_client.actions.init import main as main_init
 
@@ -24,7 +24,7 @@ def lambda_game(func_name):
     return api_call
 
 
-def get_filename(args):
+def get_filename(args, print_filename=True):
     if hasattr(args, 'filename') and args.filename:
         filename = args.filename
         filename = os.path.expanduser(filename)
@@ -36,9 +36,14 @@ def get_filename(args):
 
     mission = args.mission[0].replace('_', '-')
     try:
-        return solutions_paths()[mission]
+        filename = solutions_paths()[mission]
     except KeyError:
         return None
+    else:
+        if print_filename:
+            print('USING FILE: {}'.format(filename))
+            print()
+        return filename
 
 def get_filename_init(args):
     filename = get_filename(args)
@@ -54,8 +59,19 @@ def get_filename_init(args):
 main = lambda_game('main_check')
 
 def main_check_cio(args):
-    filename = get_filename(args)
-    mission = args.mission[0].replace('_', '-')
+    if '.' in args.mission[0]:
+        filename = args.mission[0]
+        with open(filename, encoding="utf-8") as fh:
+            first_line = fh.readline().strip()
+            cur_domain, mission = parse_env_line(first_line)
+            if not cur_domain:
+                raise ValueError('Invalid first line in the solution file')
+
+            conf.set_default_domain(cur_domain)
+
+    else:
+        mission = args.mission[0].replace('_', '-')
+        filename = get_filename(args, print_filename=False)
 
     domain_data = conf.default_domain_data
 
@@ -216,20 +232,32 @@ def main_run_cio(args):
         args.check = False # to avoid recursion
         return main(args)
 
-    mission = args.mission[0].replace('_', '-')
+    if '.' in args.mission[0]:
+        filename = args.mission[0]
+        with open(filename, encoding="utf-8") as fh:
+            first_line = fh.readline().strip()
+            cur_domain, mission = parse_env_line(first_line)
+            if not cur_domain:
+                raise ValueError('Invalid first line in the solution file')
 
-    filename = get_filename_init(args)
+            conf.set_default_domain(cur_domain)
+
+    else:
+        mission = args.mission[0].replace('_', '-')
+        filename = get_filename_init(args)
 
     domain_data = conf.default_domain_data
 
     use_server_run = domain_data['use_server_run']
 
-    if use_server_run:
-        if args.use_local_run:
-            use_server_run = False
-    else:
-        if args.use_server_run:
-            use_server_run = True
+    if hasattr(args, 'check'):
+        # it is running under the run function
+        if use_server_run:
+            if args.use_local_run:
+                use_server_run = False
+        else:
+            if args.use_server_run:
+                use_server_run = True
 
     if not use_server_run and not domain_data.get('executable'):
         raise ValueError('For the local run executable should be set')

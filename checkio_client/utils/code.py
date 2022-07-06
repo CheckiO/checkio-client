@@ -1,6 +1,7 @@
 import os
 import sys
 import stat
+import re
 
 from checkio_client.settings import conf
 from html.parser import HTMLParser
@@ -67,6 +68,11 @@ def gen_env_line(slug):
             domain=conf.default_domain
         )
 
+def parse_env_line(line):
+    find = re.search(r'\=(\w+)\s+run\s+([\w\-]+)', line)
+    if not find:
+        return None, None
+    return find.groups()
 
 def escape_description(text):
     parser = DescriptionParser()
