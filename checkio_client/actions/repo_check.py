@@ -131,9 +131,13 @@ async def send_tester_data(writer, data):
 async def tcp_echo_client(message, loop):
     global CIO_WRITER
     conf_data = conf.default_domain_data
-    reader, writer = await asyncio.open_connection(conf_data['server_host'], 
-                                                   int(conf_data['server_port']),
-                                                   loop=loop)
+    if sys.version_info.minor >= 10:
+        reader, writer = await asyncio.open_connection(conf_data['server_host'], 
+                                                       int(conf_data['server_port']))
+    else:
+        reader, writer = await asyncio.open_connection(conf_data['server_host'], 
+                                                       int(conf_data['server_port']),
+                                                       loop=loop)
     CIO_WRITER = writer
 
     logging.debug('Send: %r' % message)

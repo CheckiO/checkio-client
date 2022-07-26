@@ -3,6 +3,7 @@ import signal
 import aiohttp
 import asyncio
 import aiohttp_cors
+import sys
 from aiohttp import web
 from checkio_client.settings import conf
 
@@ -30,6 +31,8 @@ def start_server():
     web.run_app(web_app, port=8766, host='localhost')
 
 def serverd():
+    assert sys.platform != 'win32', 'Deamon (-d) can not be used in Windows'
+    
     import daemon
     from pid import PidFile
     pidfile = PidFile(conf.serv_pidfile)
