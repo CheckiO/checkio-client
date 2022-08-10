@@ -8,7 +8,14 @@ def float_comparison(digits=0):
     def comparison(right_answer, user_answer):
         if not isinstance(user_answer, (int, float)):
             return False, "It's not a number"
-        precision = 0.1 ** digits
+        precision = 0.1**digits
         return right_answer - precision <= user_answer <= right_answer + precision, None
 
     return comparison
+
+
+def to_list(answer, result):
+    try:
+        return answer == list(result), None
+    except:
+        return False, None
