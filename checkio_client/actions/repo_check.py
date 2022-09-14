@@ -6,6 +6,7 @@ import sys
 import signal
 import base64
 import logging
+import pathlib
 import warnings
 
 from checkio_client.settings import conf
@@ -46,6 +47,21 @@ async def do_tester_get_files(data, writer):
             warnings.warn('Error during oppening file "' + folder_path + '" :' + str(e))
             continue
 
+    ret['question'] = data['question']
+    ret['do'] = 'answer'
+    await send_tester_data(writer, ret)
+
+
+async def do_tester_get_folder_contents(data, writer):
+    ret = {}
+    folder_path = os.path.join(REPO_FOLDER, data['folder'])
+
+    folder_contents = []
+    for p in pathlib.Path(folder_path).rglob('*'):
+        relative_path = p.relative_to(folder_path)
+        folder_contents.append(str(relative_path))
+
+    ret['desc'] = folder_contents
     ret['question'] = data['question']
     ret['do'] = 'answer'
     await send_tester_data(writer, ret)
