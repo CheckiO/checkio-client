@@ -93,7 +93,7 @@ def main_check_cio(args):
         if com == 'start_in':
             print('*** ' + block[1] + ' ***' )
         elif com == 'in':
-            if len(block) >= 4 and block[3] and 'assert' in block[3]:
+            if len(block) >= 4 and 'assert' in block[3]:
                 new_version = True
                 print('{} ...'.format(block[3]['assert']), end='')
             else:
