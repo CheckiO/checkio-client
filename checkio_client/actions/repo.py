@@ -19,7 +19,7 @@ You can do it by doing:
 ''')
     sys.exit()
 
-def link_folder_to_repo(folder: str, repository: str) -> None:
+def link_folder_to_repo(repository: str) -> None:
 
     subprocess.run(['git', 'init'], check=True)
     subprocess.run(['git', 'add', '.'], check=True)
@@ -31,7 +31,7 @@ def link_folder_to_repo(folder: str, repository: str) -> None:
 
 def clone_repo_to_folder(template, folder):
 
-    logging.info(f'Receiving template mission from {template} ...')
+    logging.info(f'Receiving template mission from {template}...')
     git.Repo.clone_from(template, folder)
 
     def remove_readonly(func, path, execinfo):
@@ -55,18 +55,24 @@ def main_init(args):
         template = domain_data['repo_template']
 
     clone_repo_to_folder(template, folder)
-    os.chdir(os.getcwd() + '\\' + folder)
+    
 
     if args.repository:
         # TODO: Skip pyc and __pycache__
         logging.info('Send to git...')
-        link_folder_to_repo(folder, args.repository)
+        try:
+            os.chdir(folder)
+            link_folder_to_repo(args.repository)
+        finally:
+            os.chdir('..')
     print('Done')
 
 def main_link(args):
 
-    folder = args.folder[0]
-    repository = args.repository[0]
-    os.chdir(os.getcwd() + '\\' + folder)
-    link_folder_to_repo(folder, repository)
+    try:
+        os.chdir(args.folder[0])
+        link_folder_to_repo(args.repository[0])
+    finally:
+        os.chdir('..')
+        
     print('Done')
