@@ -162,7 +162,7 @@ p_plugin.add_argument('--chrome', action='store_true',
      help='install for Chrome')
 p_plugin.set_defaults(module='plugin', func='install')
 
-p_plugin = subparsers.add_parser('uninstall-plugin', help='Unstall Web Plugin')
+p_plugin = subparsers.add_parser('uninstall-plugin', help='Uninstall Web Plugin')
 p_plugin.add_argument('--ff', action='store_true',
      help='uninstall for FireFox')
 p_plugin.add_argument('--chromium', action='store_true',
@@ -205,7 +205,7 @@ def main():
 
     logging.basicConfig(level=LEVELS[args.verbose])
 
-    # because I don't knoe how to get log_level from logging
+    # because I don't know how to get log_level from logging
     logging.log_level = LEVELS[args.verbose]
 
     try:
