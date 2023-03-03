@@ -70,9 +70,11 @@ def main_init(args):
 def main_link(args):
 
     try:
-        os.chdir(args.folder[0])
+        if args.folder[0] != ".":
+            os.chdir(args.folder[0])
         link_folder_to_repo(args.repository[0])
     finally:
-        os.chdir('..')
+        if args.folder[0] != ".":
+            os.chdir('..')
         
     print('Done')

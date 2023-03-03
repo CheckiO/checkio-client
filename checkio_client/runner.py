@@ -66,7 +66,7 @@ p_repo_link.add_argument('repository', type=str, nargs=1,
 
 p_repo_link.set_defaults(module='repo', func='main_link')
 
-p_repo_convert_eoc = subparsers.add_parser('convertrepo-to-eoc', help='Conver CheckiO format missions to EoC format missions')
+p_repo_convert_eoc = subparsers.add_parser('convertrepo-to-eoc', help='Convert CheckiO format missions to EoC format missions')
 p_repo_convert_eoc.add_argument('cio', type=str,
     metavar='cio_folder',
     help='CheckiO Mission folder')
