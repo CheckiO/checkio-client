@@ -22,7 +22,7 @@ def get_git(args):
 def reset_initial(args):
     init_home_file(args.mission, force=True)
 
-def complile_mission(args):
+def compile_mission(args):
     recompile_mission(args.mission)
 
 def build_mission(args):
@@ -52,7 +52,11 @@ def init_mission(args):
 
     if args.repository:
         print('Send to git...')
-        link_folder_to_repo(folder.mission_folder(), args.repository)
+        try:
+            os.chdir(folder.mission_folder())
+            link_folder_to_repo(args.repository)
+        finally:
+            os.chdir('..')
 
     recompile_mission(mission)
     if not args.without_container:
@@ -111,7 +115,7 @@ def battle(args):
     if args.balance:
         logging.info('Balance from:' + args.balance)
         if not os.path.exists(args.balance):
-            logging.info('Balance "' + args.balance + '" does not exists. Using was skiped')
+            logging.info('Balance "' + args.balance + '" does not exists. Using was skipped')
         else:
             ref_extra_volume = {
                 args.balance: {

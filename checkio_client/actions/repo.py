@@ -4,44 +4,34 @@ import shutil
 import os
 import stat
 import logging
+import subprocess
 
 from checkio_client.settings import conf
 
 try:
     import git
 except ImportError:
-    print('''
+    print(f'''
 if you want to work with repos please install GitPython
 You can do it by doing:
 
-{} -mpip install GitPython
-'''.format(sys.executable))
+{sys.executable} -mpip install GitPython
+''')
     sys.exit()
 
-def link_folder_to_repo(folder, repository):
-    folder = os.path.abspath(folder)
-    repo = git.Repo.init(folder)
-    logging.info('Add files to repo')
-    for root, dirs, files in os.walk(folder):
-        if root.endswith('.git') or '/.git/' in root:
-            continue
+def link_folder_to_repo(repository: str) -> None:
 
-        # TODO: Skip pyc and __pycache__
+    subprocess.run(['git', 'init'], check=True)
+    subprocess.run(['git', 'add', '.'], check=True)
+    subprocess.run(['git', 'commit', '-m', '"first commit"'], check=True)
+    subprocess.run(['git', 'branch', '-M', 'master'], check=True)
+    subprocess.run(['git', 'remote', 'add', 'origin', repository], check=True)
+    subprocess.run(['git', 'push', '-u', 'origin', 'master'], check=True)
 
-        for file_name in files:
-            abs_file_name = os.path.join(root, file_name)
-            logging.info(abs_file_name)
-            repo.index.add([abs_file_name])
-
-    repo.index.commit("initial commit")
-    origin = repo.create_remote('origin', repository)
-    logging.info('Push to:' + repository)
-    origin.push(repo.refs)
-    origin.fetch()
-    repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master)
 
 def clone_repo_to_folder(template, folder):
-    logging.info('Reciving template mission from ' + template + ' ...')
+
+    logging.info(f'Receiving template mission from {template}...')
     git.Repo.clone_from(template, folder)
 
     def remove_readonly(func, path, execinfo):
@@ -51,6 +41,7 @@ def clone_repo_to_folder(template, folder):
 
 
 def main_init(args):
+
     folder = args.folder[0]
     domain_data = conf.default_domain_data
     if os.path.exists(folder):
@@ -63,15 +54,28 @@ def main_init(args):
         domain_data = conf.default_domain_data
         template = domain_data['repo_template']
 
-    clone_repo_to_folder(template, folder)    
+    clone_repo_to_folder(template, folder)
+    
 
     if args.repository:
+        # TODO: Skip pyc and __pycache__
         logging.info('Send to git...')
-        link_folder_to_repo(folder, args.repository)
+        try:
+            os.chdir(folder)
+            link_folder_to_repo(args.repository)
+        finally:
+            os.chdir('..')
     print('Done')
 
 def main_link(args):
+
     folder = args.folder[0]
-    repository = args.repository[0]
-    link_folder_to_repo(folder, repository)
+    try:
+        if folder != ".":
+            os.chdir(folder)
+        link_folder_to_repo(args.repository[0])
+    finally:
+        if folder != ".":
+            os.chdir('..')
+        
     print('Done')
