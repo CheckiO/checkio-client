@@ -8,7 +8,7 @@ import socket
 __all__ = ['conf']
 CUR_DIR = os.path.dirname(__file__)
 
-VERSION = (0, 3, 1)
+VERSION = (0, 3, 2)
 
 TRANSFER_PARAMETERS = ('executable', 'editor', 'solutions');
 

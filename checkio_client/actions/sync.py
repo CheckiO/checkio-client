@@ -45,6 +45,7 @@ domain = {domain}
 
 
 def main(args):
+    import ipdb; ipdb.set_trace()
     folder = args.folder
     with_unseen = not args.exclude_unseen
     with_solved = not args.exclude_solved
