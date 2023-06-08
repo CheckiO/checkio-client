@@ -10,7 +10,7 @@ echo = None
 def init(ip, port):
     global echo
     print("CONNECT", ip, port)
-    echo = Telnet()
+    echo = Telnet(connect_timeout=None)
     echo.connect(ip, port)
 
 
