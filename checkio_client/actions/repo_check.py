@@ -255,8 +255,12 @@ def main(args):
         asyncio.set_event_loop(loop)
     else:
         loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait([
-        tcp_echo_client(message, loop),
-        loop.create_server(EchoServerClientProtocol, '127.0.0.1', int(conf.local_uch_port))
-    ]))
+
+    async def create_tasks_func():
+        tasks = list()
+        tasks.append(asyncio.create_task(tcp_echo_client(message, loop)))
+        tasks.append(asyncio.create_task(loop.create_server(EchoServerClientProtocol, '127.0.0.1', int(conf.local_uch_port))))
+        await asyncio.wait(tasks)
+
+    loop.run_until_complete(create_tasks_func())
     loop.close()

@@ -1,3 +1,4 @@
+Exscript==2.6.28
 websockets==10.3
 requests==2.31.0
 aiohttp==3.8.4
